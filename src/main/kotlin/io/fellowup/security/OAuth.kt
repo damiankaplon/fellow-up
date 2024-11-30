@@ -24,7 +24,7 @@ fun Application.installOAuthAuth() {
                     accessTokenUrl = "http://localhost:8282/realms/fellow_up/protocol/openid-connect/token",
                     requestMethod = HttpMethod.Post,
                     clientId = "app_fellow_up",
-                    clientSecret = "7FJwC2xZoqiFdOHCCKNx1SvZ4Hv9GOit"
+                    clientSecret = "y8h6R7eMtQky3o4DAcHeiyGq3Y"
                 )
             }
             client = HttpClient(Apache)
@@ -36,6 +36,7 @@ fun Application.installOAuthAuth() {
             val jwkProvider = JwkProviderBuilder(jwkEndpointUrl).build()
             verifier(jwkProvider, "http://localhost:8282/realms/fellow_up") {
             }
+
             validate { jwtCredential -> JWTPrincipal(jwtCredential.payload) }
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized) }
         }

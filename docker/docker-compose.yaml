@@ -17,13 +17,17 @@ services:
     image: quay.io/keycloak/keycloak:26.0.6
     container_name: keycloak
     environment:
+      KC_IMPORT: /opt/jboss/keycloak/imports/realm-export.json
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres/keycloak
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: keycloak
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    command: start-dev
+    volumes:
+      - ./keycloak-imports:/opt/keycloak/data/import
+    command: start-dev --import-realm
+
     depends_on:
       - postgres
     ports:

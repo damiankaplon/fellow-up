@@ -23,4 +23,13 @@ fun Routing.registerOAuthCodeFlowEndpoints() {
             )
         }
     }
+    get("logout") {
+        call.respondRedirect("http://localhost:8282/realms/fellow_up/protocol/openid-connect/logout")
+    }
+}
+
+fun Routing.secure(routing: Route.() -> Unit) {
+    authenticate(AUTH_CONFIG_JWT) {
+        routing.invoke(this)
+    }
 }
