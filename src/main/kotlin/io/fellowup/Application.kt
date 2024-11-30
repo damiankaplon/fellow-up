@@ -1,5 +1,6 @@
-package fellowup.example
+package io.fellowup
 
+import io.fellowup.security.installOAuthAuth
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -7,5 +8,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    installSerialization()
+    installOAuthAuth()
     configureRouting()
 }
