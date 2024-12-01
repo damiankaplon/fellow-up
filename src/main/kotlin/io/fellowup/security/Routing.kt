@@ -5,8 +5,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.registerOAuthCodeFlowEndpoints() {
-    authenticate(AUTH_CONFIG_OAUTH) {
+fun Routing.registerOAuthCodeFlowEndpoints(oauthLogoutUrl: String? = null) {
+    authenticate(OAUTH2_SERVER_CONFIG) {
         get("/login") { /* This route is just registered to trigger OAuth2 */ }
         get("/token") {
             val token = call.principal<OAuthAccessTokenResponse.OAuth2>()
@@ -23,13 +23,11 @@ fun Routing.registerOAuthCodeFlowEndpoints() {
             )
         }
     }
-    get("logout") {
-        call.respondRedirect("http://localhost:8282/realms/fellow_up/protocol/openid-connect/logout")
-    }
+    oauthLogoutUrl?.run { get("logout") { call.respondRedirect(this@run) } }
 }
 
 fun Routing.secure(routing: Route.() -> Unit) {
-    authenticate(AUTH_CONFIG_JWT) {
+    authenticate(JWT_CONFIG) {
         routing.invoke(this)
     }
 }

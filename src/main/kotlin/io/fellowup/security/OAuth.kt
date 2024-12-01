@@ -10,33 +10,47 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import java.net.URI
 
-const val AUTH_CONFIG_OAUTH = "keycloak"
-const val AUTH_CONFIG_JWT = "keycloak-jwt"
+const val OAUTH2_SERVER_CONFIG = "oauth2-server-config"
+const val JWT_CONFIG = "jwt-config"
+
+class OAuthPropertiesConfigFileProvider(private val env: ApplicationEnvironment) {
+    val authUrl get() = env.config.property("oauth.auth-url").getString()
+    val redirectUrl get() = env.config.property("oauth.redirect-url").getString()
+    val accessTokenUrl get() = env.config.property("oauth.access-token-url").getString()
+    val clientId get() = env.config.property("oauth.client-id").getString()
+    val secret get() = env.config.property("oauth.secret").getString()
+    val logoutUrl get() = env.config.propertyOrNull("oauth.logout.url")?.getString()
+}
+
+class JwtPropertiesConfigFileProvider(private val env: ApplicationEnvironment) {
+    val jwkUrl get() = env.config.property("jwt.jwk-url").getString()
+    val issuer get() = env.config.property("jwt.issuer").getString()
+}
 
 fun Application.installOAuthAuth() {
     install(Authentication) {
-        oauth(AUTH_CONFIG_OAUTH) {
-            urlProvider = { "http://localhost:8080/token" }
+        oauth(OAUTH2_SERVER_CONFIG) {
+            val properties = OAuthPropertiesConfigFileProvider(this@installOAuthAuth.environment)
+            urlProvider = { properties.redirectUrl }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "keycloak",
-                    authorizeUrl = "http://localhost:8282/realms/fellow_up/protocol/openid-connect/auth",
-                    accessTokenUrl = "http://localhost:8282/realms/fellow_up/protocol/openid-connect/token",
+                    authorizeUrl = properties.authUrl,
+                    accessTokenUrl = properties.accessTokenUrl,
                     requestMethod = HttpMethod.Post,
-                    clientId = "app_fellow_up",
-                    clientSecret = "y8h6R7eMtQky3o4DAcHeiyGq3Y"
+                    clientId = properties.clientId,
+                    clientSecret = properties.secret
                 )
             }
             client = HttpClient(Apache)
         }
 
-        jwt(AUTH_CONFIG_JWT) {
+        jwt(JWT_CONFIG) {
+            val properties = JwtPropertiesConfigFileProvider(this@installOAuthAuth.environment)
             val jwkEndpointUrl =
-                URI.create("http://localhost:8282/realms/fellow_up/protocol/openid-connect/certs").toURL()
+                URI.create(properties.jwkUrl).toURL()
             val jwkProvider = JwkProviderBuilder(jwkEndpointUrl).build()
-            verifier(jwkProvider, "http://localhost:8282/realms/fellow_up") {
-            }
-
+            verifier(jwkProvider, properties.issuer) { /* No additional constraints */ }
             validate { jwtCredential -> JWTPrincipal(jwtCredential.payload) }
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized) }
         }
