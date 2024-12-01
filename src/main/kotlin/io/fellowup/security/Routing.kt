@@ -6,7 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.registerOAuthCodeFlowEndpoints() {
-    authenticate(AUTH_CONFIG_OAUTH) {
+    authenticate(OAUTH2_SERVER_CONFIG) {
         get("/login") { /* This route is just registered to trigger OAuth2 */ }
         get("/token") {
             val token = call.principal<OAuthAccessTokenResponse.OAuth2>()
@@ -29,7 +29,7 @@ fun Routing.registerOAuthCodeFlowEndpoints() {
 }
 
 fun Routing.secure(routing: Route.() -> Unit) {
-    authenticate(AUTH_CONFIG_JWT) {
+    authenticate(JWT_CONFIG) {
         routing.invoke(this)
     }
 }
