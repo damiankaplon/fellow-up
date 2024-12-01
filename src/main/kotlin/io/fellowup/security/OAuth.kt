@@ -19,6 +19,7 @@ class OAuthPropertiesConfigFileProvider(private val env: ApplicationEnvironment)
     val accessTokenUrl get() = env.config.property("oauth.access-token-url").getString()
     val clientId get() = env.config.property("oauth.client-id").getString()
     val secret get() = env.config.property("oauth.secret").getString()
+    val logoutUrl get() = env.config.propertyOrNull("oauth.logout.url")?.getString()
 }
 
 class JwtPropertiesConfigFileProvider(private val env: ApplicationEnvironment) {

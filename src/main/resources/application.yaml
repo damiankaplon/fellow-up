@@ -11,6 +11,8 @@ oauth:
   access-token-url: "${APP_FELLOW_UP_ACCESS_TOKEN_URL}:http://localhost:8282/realms/fellow_up/protocol/openid-connect/token"
   client-id: "${APP_FELLOW_UP_CLIENT_ID}:app_fellow_up"
   secret: "${APP_FELLOW_UP_SECRET}:y8h6R7eMtQky3o4DAcHeiyGq3Y"
+  logout:
+    url: "${APP_FELLOW_UP_LOG_OUT}:http://localhost:8282/realms/fellow_up/protocol/openid-connect/logout"
 
 jwt:
   jwk-url: "${APP_FELLOW_UP_JWK_URL}:http://localhost:8282/realms/fellow_up/protocol/openid-connect/certs"
