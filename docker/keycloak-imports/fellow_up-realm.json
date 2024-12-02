@@ -1,6 +1,8 @@
 {
   "id" : "63ae8a9e-26bc-4b49-85df-f2583ce56bd0",
   "realm" : "fellow_up",
+  "displayName" : "Fellow Up!",
+  "displayNameHtml" : "Fellow Up!",
   "notBefore" : 0,
   "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
@@ -149,7 +151,7 @@
         "composite" : true,
         "composites" : {
           "client" : {
-            "realm-management" : [ "view-realm", "query-groups", "view-identity-providers", "manage-realm", "manage-events", "manage-users", "manage-identity-providers", "view-events", "query-clients", "view-authorization", "impersonation", "manage-clients", "create-client", "manage-authorization", "query-realms", "query-users", "view-clients", "view-users" ]
+            "realm-management" : [ "view-realm", "query-groups", "view-identity-providers", "manage-realm", "manage-users", "manage-events", "manage-identity-providers", "view-events", "query-clients", "view-authorization", "impersonation", "manage-clients", "create-client", "manage-authorization", "query-realms", "query-users", "view-clients", "view-users" ]
           }
         },
         "clientRole" : true,
@@ -400,8 +402,8 @@
     "clientConsents" : [ {
       "clientId" : "app_fellow_up",
       "grantedClientScopes" : [ "email", "profile", "roles" ],
-      "createdDate" : 1733008347854,
-      "lastUpdatedDate" : 1733008347863
+      "createdDate" : 1733076182279,
+      "lastUpdatedDate" : 1733076182286
     } ],
     "notBefore" : 0,
     "groups" : [ ]
@@ -1278,7 +1280,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "saml-user-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper" ]
       }
     }, {
       "id" : "98bfbdef-4d39-44a8-9acf-5dae10ed8696",
@@ -1305,7 +1307,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-address-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-property-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-usermodel-property-mapper", "saml-user-attribute-mapper", "oidc-address-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper" ]
       }
     }, {
       "id" : "add41ff5-2caf-41d4-8239-1486a404faac",
@@ -2009,7 +2011,9 @@
     "oauth2DeviceCodeLifespan" : "600",
     "parRequestUriLifespan" : "60",
     "clientSessionMaxLifespan" : "0",
-    "organizationsEnabled" : "false"
+    "frontendUrl" : "",
+    "organizationsEnabled" : "false",
+    "acr.loa.map" : "{}"
   },
   "keycloakVersion" : "26.0.6",
   "userManagedAccessAllowed" : false,
