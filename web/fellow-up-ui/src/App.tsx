@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import {BottomNavBar, BottomNavBarDestination} from "./shell/BottomNavBar.tsx";
+import {BrowserRouter} from "react-router-dom";
+import LoupeIcon from '@mui/icons-material/Loupe';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+
+  const bottomNavBarDestinations: BottomNavBarDestination[] = [
+    {
+      path: '/matchmaking',
+      text: 'Matchmaking',
+      icon: <LoupeIcon/>
+    }
+  ]
+
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <>
+        <BrowserRouter>
+
+        </BrowserRouter>
+        <BottomNavBar destinations={bottomNavBarDestinations}/>
+      </>
   )
 }
-
-export default App
