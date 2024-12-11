@@ -4,8 +4,9 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import {BottomNavBar, BottomNavBarDestination} from "./shell/BottomNavBar.tsx";
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import LoupeIcon from '@mui/icons-material/Loupe';
+import Overview from "./matchmaking/Overview.tsx";
 
 export default function App() {
 
@@ -17,13 +18,12 @@ export default function App() {
     }
   ]
 
-
   return (
-      <>
-        <BrowserRouter>
-
-        </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/matchmaking" element={<Overview/>}/>
+        </Routes>
         <BottomNavBar destinations={bottomNavBarDestinations}/>
-      </>
+      </BrowserRouter>
   )
 }
