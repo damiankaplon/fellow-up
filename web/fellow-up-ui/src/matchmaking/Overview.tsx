@@ -1,10 +1,10 @@
 import {Container} from "@mui/material";
-import Matchmakings from "./Matchmakings.tsx";
+import Matches from "./Matches.tsx";
 
 export default function Overview() {
   return (
       <Container maxWidth={false}>
-        <Matchmakings/>
+        <Matches/>
       </Container>
   );
 }
