@@ -8,9 +8,7 @@ export default function Matchmakings() {
   const [showMatchmakingWizard, setShowMatchmakingWizard] = React.useState(false);
   return (
     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-      <Typography variant={"h6"}>
-        Matches
-      </Typography>
+      <Typography variant={"h6"}>Matchmakings</Typography>
       <MatchmakingWizardDialog open={showMatchmakingWizard}
                                onComplete={
                                  (result: MatchmakingWizardResult) => {
