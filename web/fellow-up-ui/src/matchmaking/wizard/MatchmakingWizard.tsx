@@ -32,46 +32,38 @@ export function MatchmakingWizard(props: MatchmakingWizardProps) {
     completed: false
   });
 
-  const timeSelect = (
-    <TimeSelect selectedDate={wizardState.date}
-                onTimeSelect={(value: Date) => {
-                  setWizardState((currentState: MatchmakingWizardState) => (
-                      {
-                        ...currentState,
-                        date: value,
-                        completed: true
-                      }
-                    )
-                  );
-                }}/>
-  );
+  console.log(wizardState);
 
-  const dateSelect = (
-    <DateSelect onDateSelect={
-      (selected: Date) => {
-        setWizardState((currentState: MatchmakingWizardState) => ({
-            ...currentState,
-            date: selected,
-            currentStep: currentState.currentStep + 1
-          })
-        );
+  const onCategorySelect = (category: string) => setWizardState(
+    (currentState: MatchmakingWizardState) => (
+      {...currentState, category: category, currentStep: currentState.currentStep + 1}
+    )
+  );
+  const categorySelect = (<CategorySelect onCategorySelect={onCategorySelect}/>);
+
+  const onDateSelect = (selected: Date) => setWizardState(
+    (currentState: MatchmakingWizardState) => (
+      {
+        ...currentState,
+        date: selected,
+        currentStep: currentState.currentStep + 1
       }
-    }
-    />
+    )
   );
+  const dateSelect = (<DateSelect onDateSelect={onDateSelect}/>);
 
-  const categorySelect = (
-    <CategorySelect onCategorySelect={(category: string) => {
-      setWizardState((currentState: MatchmakingWizardState) => (
-        {...currentState, category: category, currentStep: currentState.currentStep + 1})
-      );
-    }}
-    />
+  const onTimeSelect = (value: Date) => setWizardState(
+    (currentState: MatchmakingWizardState) => (
+      {
+        ...currentState,
+        date: value,
+        completed: true
+      }
+    )
   );
-
+  const timeSelect = (<TimeSelect selectedDate={wizardState.date} onTimeSelect={onTimeSelect}/>);
 
   React.useEffect(() => {
-    console.log(`Changing content to: ${wizardState.currentStep}`);
     if (wizardState.currentStep == 1) {
       setCurrentContent(categorySelect);
     }
