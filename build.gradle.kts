@@ -46,6 +46,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresql_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("com.zaxxer:HikariCP:6.2.1")
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")

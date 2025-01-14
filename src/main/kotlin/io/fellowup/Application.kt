@@ -1,5 +1,6 @@
 package io.fellowup
 
+import io.fellowup.db.installDatabaseModule
 import io.fellowup.security.installOAuthAuth
 import io.ktor.server.application.*
 
@@ -11,4 +12,5 @@ fun Application.module() {
     installSerialization()
     installOAuthAuth()
     configureRouting()
+    val databaseModule = installDatabaseModule()
 }
