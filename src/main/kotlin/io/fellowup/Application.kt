@@ -1,8 +1,11 @@
 package io.fellowup
 
 import io.fellowup.db.installDatabaseModule
+import io.fellowup.security.NoAuthenticatedSubjectExceptionHandler
+import io.fellowup.security.NoJwtExceptionHandler
 import io.fellowup.security.installOAuthAuth
 import io.ktor.server.application.*
+import io.ktor.server.plugins.statuspages.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -13,4 +16,8 @@ fun Application.module() {
     installOAuthAuth()
     configureRouting()
     val databaseModule = installDatabaseModule()
+    install(StatusPages) {
+        exception(NoJwtExceptionHandler)
+        exception(NoAuthenticatedSubjectExceptionHandler)
+    }
 }

@@ -10,6 +10,7 @@ import java.util.*
 
 class MatchmakingEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<MatchmakingEntity>(Matchmakings)
+
     var category: String by Matchmakings.category
     var userId: UUID by Matchmakings.user_id
     var at: Instant by Matchmakings.at
