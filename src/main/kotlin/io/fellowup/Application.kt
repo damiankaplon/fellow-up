@@ -15,7 +15,7 @@ fun Application.module() {
     installSerialization()
     installOAuthAuth()
     configureRouting()
-    val databaseModule = installDatabaseModule()
+    val dbModule = installDatabaseModule()
     install(StatusPages) {
         exception(NoJwtExceptionHandler)
         exception(NoAuthenticatedSubjectExceptionHandler)
