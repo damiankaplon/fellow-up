@@ -29,7 +29,7 @@ fun Application.module() {
     val matchmakingsController = matchmakingModule.matchmakingsController
     routing {
         registerOAuthCodeFlowEndpoints(oauthLogoutUrl = oAuthModule.oauthConfigProvider.logoutUrl)
-        secure {
+        jwtSecured {
             post("$API_PREFIX/matchmakings") {
                 val body = call.receive<CreateMatchmakingBody>()
                 call.respond<MatchmakingDto>(

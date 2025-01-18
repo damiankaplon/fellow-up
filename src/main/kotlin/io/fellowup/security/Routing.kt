@@ -27,7 +27,7 @@ fun Routing.registerOAuthCodeFlowEndpoints(oauthLogoutUrl: String? = null) {
 }
 
 // Rename to jwtSecured
-fun Routing.secure(routing: Route.() -> Unit) {
+fun Routing.jwtSecured(routing: Route.() -> Unit) {
     authenticate(JWT_CONFIG) {
         routing.invoke(this)
     }

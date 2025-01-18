@@ -12,8 +12,8 @@ import java.net.URI
 
 const val OAUTH2_SERVER_CONFIG = "oauth2-server-config"
 const val JWT_CONFIG = "jwt-config"
-// Rename to OauthConfigProvider
-class OAuthPropertiesConfigFileProvider(private val env: ApplicationEnvironment) {
+
+class OAuthConfigFileProvider(private val env: ApplicationEnvironment) {
     val authUrl get() = env.config.property("oauth.auth-url").getString()
     val redirectUrl get() = env.config.property("oauth.redirect-url").getString()
     val accessTokenUrl get() = env.config.property("oauth.access-token-url").getString()
@@ -30,7 +30,7 @@ class JwtPropertiesConfigFileProvider(private val env: ApplicationEnvironment) {
 fun Application.installOAuthAuth(): OAuthAuthModule {
     install(Authentication) {
         oauth(OAUTH2_SERVER_CONFIG) {
-            val properties = OAuthPropertiesConfigFileProvider(this@installOAuthAuth.environment)
+            val properties = OAuthConfigFileProvider(this@installOAuthAuth.environment)
             urlProvider = { properties.redirectUrl }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
@@ -55,9 +55,9 @@ fun Application.installOAuthAuth(): OAuthAuthModule {
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized) }
         }
     }
-    return OAuthAuthModule(OAuthPropertiesConfigFileProvider(this.environment))
+    return OAuthAuthModule(OAuthConfigFileProvider(this.environment))
 }
 
 class OAuthAuthModule(
-    val oauthConfigProvider: OAuthPropertiesConfigFileProvider
+    val oauthConfigProvider: OAuthConfigFileProvider
 )
