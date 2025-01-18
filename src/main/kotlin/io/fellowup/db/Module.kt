@@ -2,10 +2,9 @@ package io.fellowup.db
 
 import io.ktor.server.application.Application
 import org.jetbrains.exposed.sql.Database
-import javax.sql.DataSource
 
 class DatabaseModule(
-    val transactionManager: TransactionalRunner,
+    val transactionalRunner: TransactionalRunner,
 )
 
 fun Application.installDatabaseModule(): DatabaseModule {
