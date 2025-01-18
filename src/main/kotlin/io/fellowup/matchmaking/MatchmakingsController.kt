@@ -11,15 +11,16 @@ import kotlinx.serialization.Serializable
 
 class MatchmakingsController(
     private val transactionalRunner: TransactionalRunner,
+    private val matchmakingRepository: MatchmakingRepository
 ) {
 
     fun createMatchmaking(body: CreateMatchmakingBody, principal: Principal): MatchmakingDto =
-        transactionalRunner.transaction { MatchmakingEntity.new { from(body, principal) } }.toDto()
+        transactionalRunner.transaction { matchmakingRepository.save(body.toDomain(principal)) }.toDto()
 
 
     fun getMatchmakings(principal: Principal): Collection<MatchmakingDto> =
         transactionalRunner.transaction(readOnly = true) {
-            return@transaction MatchmakingEntity.find { Matchmakings.user_id eq principal.userId }
+            return@transaction matchmakingRepository.findAllByUserId(principal.userId)
                 .map { it.toDto() }.toSet()
         }
 
@@ -37,14 +38,16 @@ class MatchmakingsController(
         val at: Instant
     )
 
-    fun MatchmakingEntity.from(body: CreateMatchmakingBody, principal: Principal) {
-        this.category = body.category
-        this.at = body.at.toJavaInstant()
-        this.userId = principal.userId
+    private fun CreateMatchmakingBody.toDomain(principal: Principal): Matchmaking {
+        return Matchmaking(
+            category = this.category,
+            at = this.at.toJavaInstant(),
+            userId = principal.userId
+        )
     }
 
 
-    fun MatchmakingEntity.toDto() = MatchmakingDto(
+    private fun Matchmaking.toDto(): MatchmakingDto = MatchmakingDto(
         id = id.value.toKotlinx(),
         category = category,
         userId = null,

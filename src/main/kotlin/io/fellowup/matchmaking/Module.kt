@@ -5,9 +5,10 @@ import io.ktor.server.application.*
 
 fun Application.installMatchmakingModule(
     transactionalRunner: TransactionalRunner,
+    matchmakingRepository: MatchmakingRepository = MatchmakingDaoRepository()
 ): MatchmakingsModule {
     return MatchmakingsModule(
-        matchmakingsController = MatchmakingsController(transactionalRunner)
+        matchmakingsController = MatchmakingsController(transactionalRunner, matchmakingRepository)
     )
 }
 

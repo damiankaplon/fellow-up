@@ -7,6 +7,7 @@ class DatabaseModule(
     val transactionalRunner: TransactionalRunner,
 )
 
+
 fun Application.installDatabaseModule(): DatabaseModule {
     val databaseConfigProvider = KtorEnvDatabaseConfigProvider(environment)
     val databaseSourceProvider = HikariCPDataSourceProvider(databaseConfigProvider, environment)
