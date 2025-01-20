@@ -8,10 +8,11 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import java.net.URI
 
-const val OAUTH2_SERVER_CONFIG = "oauth2-server-config"
-const val JWT_CONFIG = "jwt-config"
+private const val OAUTH2_SERVER_CONFIG = "oauth2-server-config"
+private const val JWT_CONFIG = "jwt-config"
 
 class OAuthConfigFileProvider(private val env: ApplicationEnvironment) {
     val authUrl get() = env.config.property("oauth.auth-url").getString()
@@ -28,9 +29,9 @@ class JwtPropertiesConfigFileProvider(private val env: ApplicationEnvironment) {
 }
 
 fun Application.installOAuthAuth(): OAuthAuthModule {
+        val properties = OAuthConfigFileProvider(this@installOAuthAuth.environment)
     install(Authentication) {
         oauth(OAUTH2_SERVER_CONFIG) {
-            val properties = OAuthConfigFileProvider(this@installOAuthAuth.environment)
             urlProvider = { properties.redirectUrl }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
@@ -54,10 +55,33 @@ fun Application.installOAuthAuth(): OAuthAuthModule {
             validate { jwtCredential -> JWTPrincipal(jwtCredential.payload) }
             challenge { _, _ -> call.respond(HttpStatusCode.Unauthorized) }
         }
+
     }
-    return OAuthAuthModule(OAuthConfigFileProvider(this.environment))
+        this.routing { installOauthCodeFlow(properties.logoutUrl) }
+    return OAuthAuthModule(SecuredRouting { routing, routes -> routing.authenticate(JWT_CONFIG) { routes() } })
+}
+
+private fun Routing.installOauthCodeFlow(oauthLogoutUrl: String? = null) {
+    authenticate(OAUTH2_SERVER_CONFIG) {
+        get("/login") { /* This route is just registered to trigger OAuth2 */ }
+        get("/token") {
+            val token = call.principal<OAuthAccessTokenResponse.OAuth2>()
+            if (token == null) {
+                call.respond(HttpStatusCode.Unauthorized); return@get
+            }
+            call.respond(
+                HttpStatusCode.OK,
+                OAuthAuth(
+                    token = token.accessToken,
+                    refreshToken = token.refreshToken,
+                    expiresIn = token.expiresIn.toInt()
+                )
+            )
+        }
+    }
+    oauthLogoutUrl?.run { get("logout") { call.respondRedirect(this@run) } }
 }
 
 class OAuthAuthModule(
-    val oauthConfigProvider: OAuthConfigFileProvider
+    val securedRouting: SecuredRouting
 )

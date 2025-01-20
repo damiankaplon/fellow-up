@@ -33,7 +33,6 @@ class MatchmakingsController(
     @Serializable
     data class MatchmakingDto(
         val id: Uuid?,
-        val userId: Uuid?,
         val category: String,
         val at: Instant
     )
@@ -50,7 +49,6 @@ class MatchmakingsController(
     private fun Matchmaking.toDto(): MatchmakingDto = MatchmakingDto(
         id = id.value.toKotlinx(),
         category = category,
-        userId = null,
         at = at.toKotlinInstant()
     )
 }

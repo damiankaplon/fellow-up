@@ -55,6 +55,9 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("io.mockk:mockk:1.13.16")
+    testImplementation("org.assertj:assertj-core:3.27.3")
+    testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
 }
 
 flyway {

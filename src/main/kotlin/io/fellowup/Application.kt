@@ -1,17 +1,15 @@
 package io.fellowup
 
-import io.fellowup.db.installDatabaseModule
-import io.fellowup.matchmaking.MatchmakingsController.CreateMatchmakingBody
-import io.fellowup.matchmaking.MatchmakingsController.MatchmakingDto
+import io.fellowup.db.installDatabase
+import io.fellowup.db.installTransactionalRunner
 import io.fellowup.matchmaking.installMatchmakingModule
-import io.fellowup.security.*
+import io.fellowup.security.NoAuthenticatedSubjectExceptionHandler
+import io.fellowup.security.NoJwtExceptionHandler
+import io.fellowup.security.installOAuthAuth
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-private val API_PREFIX = "api"
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -23,24 +21,11 @@ fun Application.module() {
         exception(NoJwtExceptionHandler)
         exception(NoAuthenticatedSubjectExceptionHandler)
     }
-    val dbModule = installDatabaseModule()
+    val db = installDatabase()
+    val transactionalRunner = installTransactionalRunner(db)
     val oAuthModule = installOAuthAuth()
-    val matchmakingModule = installMatchmakingModule(dbModule.transactionalRunner)
-    val matchmakingsController = matchmakingModule.matchmakingsController
+    val matchmakingModule = installMatchmakingModule(transactionalRunner)
     routing {
-        registerOAuthCodeFlowEndpoints(oauthLogoutUrl = oAuthModule.oauthConfigProvider.logoutUrl)
-        jwtSecured {
-            post("$API_PREFIX/matchmakings") {
-                val body = call.receive<CreateMatchmakingBody>()
-                call.respond<MatchmakingDto>(
-                    matchmakingsController.createMatchmaking(body, call.jwtPrincipalOrThrow())
-                )
-            }
-            get("$API_PREFIX/matchmakings") {
-                call.respond<Collection<MatchmakingDto>>(
-                    matchmakingsController.getMatchmakings(call.jwtPrincipalOrThrow())
-                )
-            }
-        }
+        installAppRouting(oAuthModule.securedRouting, matchmakingModule.matchmakingsController)
     }
 }
