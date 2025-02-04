@@ -33,6 +33,7 @@ fun Application.installOAuthAuth(): OAuthAuthModule {
     install(Authentication) {
         oauth(OAUTH2_SERVER_CONFIG) {
             urlProvider = { properties.redirectUrl }
+            client = HttpClient(Apache)
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "keycloak",
@@ -43,7 +44,6 @@ fun Application.installOAuthAuth(): OAuthAuthModule {
                     clientSecret = properties.secret
                 )
             }
-            client = HttpClient(Apache)
         }
 
         jwt(JWT_CONFIG) {
@@ -63,8 +63,7 @@ fun Application.installOAuthAuth(): OAuthAuthModule {
 
 private fun Routing.installOauthCodeFlow(oauthLogoutUrl: String? = null) {
     authenticate(OAUTH2_SERVER_CONFIG) {
-        get("/login") { /* This route is just registered to trigger OAuth2 */ }
-        get("/token") {
+        get("/api/token/keycloak") {
             val token = call.principal<OAuthAccessTokenResponse.OAuth2>()
             if (token == null) {
                 call.respond(HttpStatusCode.Unauthorized); return@get

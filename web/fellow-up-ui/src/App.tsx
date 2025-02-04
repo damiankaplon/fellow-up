@@ -7,6 +7,7 @@ import {BottomNavBar, BottomNavBarDestination} from "./shell/BottomNavBar.tsx";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import LoupeIcon from '@mui/icons-material/Loupe';
 import Overview from "./matchmaking/Overview.tsx";
+import KeycloakProtected from "./security/KeycloakProtected.tsx";
 
 export default function App() {
 
@@ -19,11 +20,14 @@ export default function App() {
   ]
 
   return (
+    <KeycloakProtected loadingComponent={<div>Loading...</div>}>
       <BrowserRouter>
         <Routes>
           <Route path="/matchmaking" element={<Overview/>}/>
         </Routes>
         <BottomNavBar destinations={bottomNavBarDestinations}/>
       </BrowserRouter>
+    </KeycloakProtected>
+
   )
 }
