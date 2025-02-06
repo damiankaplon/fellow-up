@@ -3,6 +3,7 @@ import {CategorySelect} from "./CategorySelect.tsx";
 import React from "react";
 import {DateSelect} from "./DateSelect.tsx";
 import {TimeSelect} from "./TimeSelect.tsx";
+import {LocationSelect} from "./LocationSelect.tsx";
 
 interface MatchmakingWizardState {
   steps: number;
@@ -10,14 +11,18 @@ interface MatchmakingWizardState {
   completed: boolean;
   category?: string;
   date?: Date;
-  // This will be important at some point in time
-  // location?: string;
+  location?: Location;
 }
 
 export interface MatchmakingWizardResult {
   category?: string;
   date?: Date;
-  // location?: string;
+  location?: Location;
+}
+
+export interface Location {
+  lat: number;
+  lng: number;
 }
 
 export interface MatchmakingWizardProps {
@@ -27,12 +32,10 @@ export interface MatchmakingWizardProps {
 export function MatchmakingWizard(props: MatchmakingWizardProps) {
   const [currentContent, setCurrentContent] = React.useState<React.ReactElement>();
   const [wizardState, setWizardState] = React.useState<MatchmakingWizardState>({
-    steps: 3,
+    steps: 4,
     currentStep: 1,
     completed: false
   });
-
-  console.log(wizardState);
 
   const onCategorySelect = (category: string) => setWizardState(
     (currentState: MatchmakingWizardState) => (
@@ -57,11 +60,23 @@ export function MatchmakingWizard(props: MatchmakingWizardProps) {
       {
         ...currentState,
         date: value,
-        completed: true
+        currentStep: currentState.currentStep + 1
       }
     )
   );
   const timeSelect = (<TimeSelect selectedDate={wizardState.date} onTimeSelect={onTimeSelect}/>);
+
+  const onLocationSelect = (location: Location) => setWizardState(
+    (currentState: MatchmakingWizardState) => (
+      {
+        ...currentState,
+        location: location,
+        completed: true
+      }
+    )
+  );
+  const locationSelect = (<LocationSelect googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+                                          onLocationSelect={onLocationSelect}/>);
 
   React.useEffect(() => {
     if (wizardState.currentStep == 1) {
@@ -73,6 +88,9 @@ export function MatchmakingWizard(props: MatchmakingWizardProps) {
     if (wizardState.currentStep == 3) {
       setCurrentContent(timeSelect);
     }
+    if (wizardState.currentStep == 4) {
+      setCurrentContent(locationSelect);
+    }
   }, [wizardState.currentStep]);
 
   React.useEffect(() => {
@@ -80,6 +98,7 @@ export function MatchmakingWizard(props: MatchmakingWizardProps) {
       props.onComplete({
         category: wizardState.category,
         date: wizardState.date,
+        location: wizardState.location
       });
     }
   }, [wizardState.completed]);

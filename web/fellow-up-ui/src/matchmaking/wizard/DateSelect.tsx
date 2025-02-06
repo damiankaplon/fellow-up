@@ -8,7 +8,7 @@ export interface DateSelectProps {
 export function DateSelect(props: DateSelectProps) {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateCalendar onChange={(value: Date) => props.onDateSelect(value)}/>
+            <DateCalendar sx={{ maxWidth: '100%' }}  onChange={(value: Date) => props.onDateSelect(value)}/>
         </LocalizationProvider>
     );
 }
