@@ -7,7 +7,7 @@ export function MatchmakingWizardDialog({open, onComplete, onClose}: {
   onClose: () => void
 }) {
   return (
-    <Dialog open={open} onClose={() => onClose()}>
+    <Dialog maxWidth={false} open={open} onClose={() => onClose()}>
       <DialogTitle>Start matchmaking</DialogTitle>
       <DialogContent dividers>
         <MatchmakingWizard onComplete={onComplete}/>
