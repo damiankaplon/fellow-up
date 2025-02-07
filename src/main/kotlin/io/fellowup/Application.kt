@@ -1,7 +1,7 @@
 package io.fellowup
 
 import io.fellowup.db.installDatabase
-import io.fellowup.db.installTransactionalRunner
+import io.fellowup.db.createTransactionalRunner
 import io.fellowup.matchmaking.installMatchmakingModule
 import io.fellowup.security.NoAuthenticatedSubjectExceptionHandler
 import io.fellowup.security.NoJwtExceptionHandler
@@ -22,7 +22,7 @@ fun Application.module() {
         exception(NoAuthenticatedSubjectExceptionHandler)
     }
     val db = installDatabase()
-    val transactionalRunner = installTransactionalRunner(db)
+    val transactionalRunner = createTransactionalRunner(db)
     val oAuthModule = installOAuthAuth()
     val matchmakingModule = installMatchmakingModule(transactionalRunner)
     routing {

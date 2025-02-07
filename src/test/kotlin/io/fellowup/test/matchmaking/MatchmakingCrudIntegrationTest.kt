@@ -1,12 +1,13 @@
 package io.fellowup.test.matchmaking
 
-import io.fellowup.db.installDatabase
 import io.fellowup.installAppRouting
 import io.fellowup.installSerialization
+import io.fellowup.matchmaking.Matchmaking
 import io.fellowup.matchmaking.MatchmakingsController
 import io.fellowup.matchmaking.installMatchmakingModule
 import io.fellowup.test.MockJwtAuthenticationProvider
-import io.fellowup.test.RollbackTransactionalRunner
+import io.fellowup.test.NopTransactionalRunner
+import io.fellowup.test.utcInstant
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -31,11 +32,10 @@ internal class MatchmakingCrudIntegrationTest {
     fun `should create matchmaking`() = testApplication {
         // Given
         environment { config = ApplicationConfig("application-test.yaml") }
+        val matchmakingRepository = MatchmakingInMemoryRepository()
         application {
             installSerialization()
-            val db = installDatabase()
-            val transactionalRunner = RollbackTransactionalRunner(db)
-            val matchmakingModule = installMatchmakingModule(transactionalRunner)
+            val matchmakingModule = installMatchmakingModule(NopTransactionalRunner(), matchmakingRepository)
             val jwtPrincipal: JWTPrincipal = mockk()
             every { jwtPrincipal.subject } returns UUID.randomUUID().toString()
             val mockJwtConfig = MockJwtAuthenticationProvider.Config(jwtPrincipal)
@@ -43,12 +43,9 @@ internal class MatchmakingCrudIntegrationTest {
             install(Authentication) { register(jwtProvider) }
             routing { installAppRouting(jwtProvider, matchmakingModule.matchmakingsController) }
         }
-        val client = createClient {
-            install(ContentNegotiation) { json() }
-        }
 
         // When
-        val response = client.post("/api/matchmakings") {
+        val response = createClient { install(ContentNegotiation) { json() } }.post("/api/matchmakings") {
             contentType(ContentType.Application.Json)
             setBody(
                 MatchmakingsController.CreateMatchmakingBody(
@@ -66,7 +63,50 @@ internal class MatchmakingCrudIntegrationTest {
         assertThat(body.at).isEqualTo(Instant.parse("2021-01-01T00:00:00Z"))
     }
 
-// TODO cant create transactional runner to run exposed repo save calls within transaction
-//    @Test
-//    fun `should find all user matchmakings`() = testApplication {}
+    @Test
+    fun `should find all user matchmakings`() = testApplication {
+        // Given
+        var loggedInUserUuid = UUID.randomUUID()
+        environment { config = ApplicationConfig("application-test.yaml") }
+        val matchmakingRepository = MatchmakingInMemoryRepository()
+        application {
+            installSerialization()
+            val matchmakingModule = installMatchmakingModule(NopTransactionalRunner(), matchmakingRepository)
+            val jwtPrincipal: JWTPrincipal = mockk()
+            every { jwtPrincipal.subject } returns loggedInUserUuid.toString()
+            val mockJwtConfig = MockJwtAuthenticationProvider.Config(jwtPrincipal)
+            val jwtProvider = MockJwtAuthenticationProvider(mockJwtConfig)
+            install(Authentication) { register(jwtProvider) }
+            routing { installAppRouting(jwtProvider, matchmakingModule.matchmakingsController) }
+        }
+
+        matchmakingRepository.save(
+            Matchmaking(
+                category = "SOCCER",
+                userId = UUID.randomUUID(),
+                at = "2025-02-07T16:59:00".utcInstant()
+            )
+        )
+        matchmakingRepository.save(
+            Matchmaking(
+                category = "SOCCER",
+                userId = loggedInUserUuid!!,
+                at = "2025-02-07T17:00:00".utcInstant()
+            )
+        )
+
+        // When
+        val response = createClient { install(ContentNegotiation) { json() } }.get("/api/matchmakings")
+
+        // Then
+        assertThat(response.status.value).isEqualTo(200)
+        val body = response.body<Set<MatchmakingsController.MatchmakingDto>>()
+        assertThat(body).singleElement().satisfies(
+            { matchmaking ->
+                assertThat(matchmaking.id).isNotNull()
+                assertThat(matchmaking.category).isEqualTo("SOCCER")
+                assertThat(matchmaking.at).isEqualTo(Instant.parse("2025-02-07T17:00:00Z"))
+            }
+        )
+    }
 }
