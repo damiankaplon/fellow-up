@@ -32,7 +32,7 @@ class MatchmakingsController(
 
     @Serializable
     data class MatchmakingDto(
-        val id: Uuid?,
+        val id: Uuid,
         val category: String,
         val at: Instant
     )

@@ -11,7 +11,6 @@ fun Application.installDatabase(): Database {
     return database
 }
 
-fun Application.installTransactionalRunner(database: Database): TransactionalRunner {
+fun createTransactionalRunner(database: Database): TransactionalRunner {
     return ExposedTransactionalRunner(database)
-
 }

@@ -1,9 +1,8 @@
 package io.fellowup.matchmaking
 
 import io.fellowup.db.TransactionalRunner
-import io.ktor.server.application.*
 
-fun Application.installMatchmakingModule(
+fun createMatchmakingModule(
     transactionalRunner: TransactionalRunner,
     matchmakingRepository: MatchmakingRepository = MatchmakingDaoRepository()
 ): MatchmakingsModule {
