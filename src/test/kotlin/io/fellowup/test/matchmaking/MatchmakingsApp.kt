@@ -3,9 +3,9 @@ package io.fellowup.test.matchmaking
 import io.fellowup.installAppRouting
 import io.fellowup.installSerialization
 import io.fellowup.matchmaking.MatchmakingRepository
-import io.fellowup.matchmaking.installMatchmakingModule
+import io.fellowup.matchmaking.createMatchmakingModule
 import io.fellowup.test.MockJwtAuthenticationProvider
-import io.fellowup.test.NopTransactionalRunner
+import io.fellowup.test.MockTransactionalRunner
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
@@ -32,7 +32,7 @@ fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
     var jwtPrincipal: JWTPrincipal? = null
     application {
         installSerialization()
-        val matchmakingModule = installMatchmakingModule(NopTransactionalRunner(), matchmakingRepository)
+        val matchmakingModule = createMatchmakingModule(MockTransactionalRunner(), matchmakingRepository)
         val mockJwtConfig = MockJwtAuthenticationProvider.Config(jwtPrincipal)
         val jwtProvider = MockJwtAuthenticationProvider(mockJwtConfig)
         install(Authentication) { register(jwtProvider) }
