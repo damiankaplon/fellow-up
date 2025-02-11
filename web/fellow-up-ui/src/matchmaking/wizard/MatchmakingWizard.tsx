@@ -15,9 +15,9 @@ interface MatchmakingWizardState {
 }
 
 export interface MatchmakingWizardResult {
-  category?: string;
-  date?: Date;
-  location?: Location;
+  category: string;
+  date: Date;
+  location: Location;
 }
 
 export interface Location {
@@ -96,9 +96,9 @@ export function MatchmakingWizard(props: MatchmakingWizardProps) {
   React.useEffect(() => {
     if (wizardState.completed == true) {
       props.onComplete({
-        category: wizardState.category,
-        date: wizardState.date,
-        location: wizardState.location
+        category: wizardState.category!,
+        date: wizardState.date!,
+        location: wizardState.location!
       });
     }
   }, [wizardState.completed]);
