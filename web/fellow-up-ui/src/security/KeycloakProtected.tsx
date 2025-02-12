@@ -1,5 +1,6 @@
 import React from "react";
 import {useKeycloak} from "@react-keycloak/web";
+import FellowUpAuthProvider from "./FellowUpAuthProvider.tsx";
 
 interface KeycloakProtectedProps {
   children: React.ReactNode;
@@ -18,5 +19,9 @@ export default function KeycloakProtected(props: KeycloakProtectedProps) {
     return null;
   }
 
-  return <>{props.children}</>;
+
+  return (
+    <FellowUpAuthProvider jwtProvider={() => keycloak.token!}>
+      {props.children}
+    </FellowUpAuthProvider>);
 }

@@ -3,18 +3,49 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import {MatchmakingWizardDialog} from "./wizard/MatchmakingWizardDialog.tsx";
 import React from "react";
 import {MatchmakingWizardResult} from "./wizard/MatchmakingWizard.tsx";
+import {FellowUpAuthContext} from "../security/FellowUpAuthContext.tsx";
+
+interface CreateMatchmakingBody {
+  category: string;
+  at: string;
+  location: {
+    lat: number;
+    lng: number;
+  }
+}
+
+function createRequestBody(from: MatchmakingWizardResult): CreateMatchmakingBody {
+  return {
+    category: from.category,
+    at: from.date.toISOString(),
+    location: from.location
+  };
+}
+
+async function createMatchmaking(
+  jwt: string,
+  result: MatchmakingWizardResult
+) {
+  await fetch(
+    '/api/matchmakings',
+    {
+      method: 'POST',
+      body: JSON.stringify(createRequestBody(result)),
+      headers: {'Authorization': `Bearer ${jwt}`, 'Content-Type': 'application/json', 'accept': 'application/json'}
+    }
+  );
+}
 
 export default function Matchmakings() {
   const [showMatchmakingWizard, setShowMatchmakingWizard] = React.useState(false);
+  const authContext = React.useContext(FellowUpAuthContext);
   return (
     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
       <Typography variant={"h6"}>Matchmakings</Typography>
       <MatchmakingWizardDialog open={showMatchmakingWizard}
-                               onComplete={
-                                 (result: MatchmakingWizardResult) => {
-                                   console.log(result);
-                                   setShowMatchmakingWizard(false);
-                                 }
+                               onComplete={(result: MatchmakingWizardResult) =>
+                                 createMatchmaking(authContext.jwt!, result)
+                                   .then(() => setShowMatchmakingWizard(false))
                                }
                                onClose={() => setShowMatchmakingWizard(false)}/>
       <IconButton onClick={() => setShowMatchmakingWizard(!showMatchmakingWizard)}>

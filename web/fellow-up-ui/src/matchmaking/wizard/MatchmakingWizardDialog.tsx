@@ -2,8 +2,8 @@ import {Dialog, DialogContent, DialogTitle} from "@mui/material";
 import {MatchmakingWizard, MatchmakingWizardResult} from "./MatchmakingWizard.tsx";
 
 export function MatchmakingWizardDialog({open, onComplete, onClose}: {
-  open: boolean;
-  onComplete: (result: MatchmakingWizardResult) => void;
+  open: boolean,
+  onComplete: (result: MatchmakingWizardResult) => void,
   onClose: () => void
 }) {
   return (
