@@ -20,12 +20,15 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         this.category = matchmaking.category
         this.at = matchmaking.at
         this.userId = matchmaking.userId
+        this.latitude = matchmaking.location.latitude
+        this.longitude = matchmaking.location.longitude
     }
 
     private fun MatchmakingDao.toDomain() = Matchmaking(
         id = Matchmaking.Id(id.value),
         category = category,
         userId = userId,
-        at = at
+        at = at,
+        location = Matchmaking.Location(latitude, longitude)
     )
 }

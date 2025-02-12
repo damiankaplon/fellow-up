@@ -7,7 +7,8 @@ class Matchmaking(
     val id: Id = Id(),
     val category: String,
     val userId: UUID,
-    val at: Instant
+    val at: Instant,
+    val location: Location
 ) {
 
     @JvmInline
@@ -25,4 +26,9 @@ class Matchmaking(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    data class Location(
+        val latitude: Double,
+        val longitude: Double
+    )
 }

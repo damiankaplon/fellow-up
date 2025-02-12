@@ -15,10 +15,9 @@ export function LocationSelect(props: LocationSelectProps) {
   return (
     <>
       <div style={{display: "flex", justifyContent: 'center'}}>
-        <Button sx={{width: '100%', marginY: '0.5em'}} variant={"outlined"} disabled={location ? undefined : true}
+        <Button sx={{width: '100%', marginY: '0.5em'}} variant={"outlined"} disabled={location == undefined}
                 onClick={() => props.onLocationSelect(location!)}>OK</Button>
       </div>
-      {/*<IconButton onClick={() => setMapOpened(!mapOpened)}><MapIcon></MapIcon></IconButton>*/}
       <APIProvider apiKey={props.googleMapsApiKey} onLoad={() => console.log("API LOADED")}
                    onError={() => console.log("API ERROR")}>
         <Map style={{height: '50svh', width: '50svw'}} defaultZoom={18} defaultCenter={{lat: 37.7749, lng: -122.4194}}

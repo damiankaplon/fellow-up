@@ -8,12 +8,17 @@ import {FellowUpAuthContext} from "../security/FellowUpAuthContext.tsx";
 interface CreateMatchmakingBody {
   category: string;
   at: string;
+  location: {
+    lat: number;
+    lng: number;
+  }
 }
 
 function createRequestBody(from: MatchmakingWizardResult): CreateMatchmakingBody {
   return {
     category: from.category,
-    at: from.date.toISOString()
+    at: from.date.toISOString(),
+    location: from.location
   };
 }
 
