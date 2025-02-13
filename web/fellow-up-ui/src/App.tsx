@@ -8,6 +8,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import LoupeIcon from '@mui/icons-material/Loupe';
 import Overview from "./matchmaking/Overview.tsx";
 import KeycloakProtected from "./security/KeycloakProtected.tsx";
+import {Box, CircularProgress} from "@mui/material";
 
 export default function App() {
 
@@ -20,7 +21,12 @@ export default function App() {
   ]
 
   return (
-    <KeycloakProtected loadingComponent={<div>Loading...</div>}>
+    <KeycloakProtected loadingComponent={
+      <Box sx={{display: 'flex', width: '100%', height: '90dvh', justifyContent: 'center', alignItems: 'center'}}>
+        <CircularProgress/>
+      </Box>
+    }
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/matchmaking" element={<Overview/>}/>
