@@ -3,54 +3,41 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import {MatchmakingWizardDialog} from "./wizard/MatchmakingWizardDialog.tsx";
 import React from "react";
 import {MatchmakingWizardResult} from "./wizard/MatchmakingWizard.tsx";
-import {FellowUpAuthContext} from "../security/FellowUpAuthContext.tsx";
+import {MatchmakingsOperations} from "./MatchmakingsOperations.ts";
+import MatchmakingsGrid from "./MatchmakingsGrid.tsx";
+import Matchmaking from "./Matchmaking.ts";
 
-interface CreateMatchmakingBody {
-  category: string;
-  at: string;
-  location: {
-    lat: number;
-    lng: number;
-  }
+export interface MatchmakingsProps {
+  operations: MatchmakingsOperations
 }
 
-function createRequestBody(from: MatchmakingWizardResult): CreateMatchmakingBody {
-  return {
-    category: from.category,
-    at: from.date.toISOString(),
-    location: from.location
-  };
-}
-
-async function createMatchmaking(
-  jwt: string,
-  result: MatchmakingWizardResult
-) {
-  await fetch(
-    '/api/matchmakings',
-    {
-      method: 'POST',
-      body: JSON.stringify(createRequestBody(result)),
-      headers: {'Authorization': `Bearer ${jwt}`, 'Content-Type': 'application/json', 'accept': 'application/json'}
-    }
-  );
-}
-
-export default function Matchmakings() {
+export default function Matchmakings({operations}: MatchmakingsProps) {
   const [showMatchmakingWizard, setShowMatchmakingWizard] = React.useState(false);
-  const authContext = React.useContext(FellowUpAuthContext);
+  const [matchmakings, setMatchmakings] = React.useState<Matchmaking[] | undefined>();
+  React.useEffect(
+    () => {
+      if (matchmakings === undefined) {
+        operations.findMatchmakings()
+          .then((matchmakings: Matchmaking[]) => setMatchmakings(matchmakings));
+      }
+    }, [matchmakings]);
   return (
-    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-      <Typography variant={"h6"}>Matchmakings</Typography>
-      <MatchmakingWizardDialog open={showMatchmakingWizard}
-                               onComplete={(result: MatchmakingWizardResult) =>
-                                 createMatchmaking(authContext.jwt!, result)
-                                   .then(() => setShowMatchmakingWizard(false))
-                               }
-                               onClose={() => setShowMatchmakingWizard(false)}/>
-      <IconButton onClick={() => setShowMatchmakingWizard(!showMatchmakingWizard)}>
-        <AddBoxIcon fontSize="large" color="primary"/>
-      </IconButton>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+        <Typography variant={"h6"}>Matchmakings</Typography>
+        <MatchmakingWizardDialog open={showMatchmakingWizard}
+                                 onComplete={(result: MatchmakingWizardResult) =>
+                                   operations.createMatchmaking(result)
+                                     .then(() => setShowMatchmakingWizard(false))
+                                     .then(() => operations.findMatchmakings())
+                                     .then((matchmakings: Matchmaking[]) => setMatchmakings(matchmakings))
+                                 }
+                                 onClose={() => setShowMatchmakingWizard(false)}/>
+        <IconButton onClick={() => setShowMatchmakingWizard(!showMatchmakingWizard)}>
+          <AddBoxIcon fontSize="large" color="primary"/>
+        </IconButton>
+      </div>
+      <MatchmakingsGrid matchmakings={matchmakings ?? []}/>
     </div>
   );
 }
