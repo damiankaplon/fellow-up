@@ -37,7 +37,7 @@ export default function Matchmakings({operations}: MatchmakingsProps) {
           <AddBoxIcon fontSize="large" color="primary"/>
         </IconButton>
       </div>
-      { matchmakings && <MatchmakingsGrid matchmakings={matchmakings}/> }
+      <MatchmakingsGrid matchmakings={matchmakings ?? []}/>
     </div>
   );
 }

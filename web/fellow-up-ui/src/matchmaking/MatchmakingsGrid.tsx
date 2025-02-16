@@ -12,7 +12,6 @@ export default function MatchmakingsGrid({matchmakings}: { matchmakings: Matchma
               columns={columns}
               rows={matchmakings}
               pageSizeOptions={[5]}
-              hideFooter={true}
     />
   );
 }
