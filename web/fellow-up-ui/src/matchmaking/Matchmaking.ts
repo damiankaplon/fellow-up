@@ -1,4 +1,4 @@
-export interface Matchmaking {
+export default interface Matchmaking {
   id: string;
   category: string;
   at: Date;
