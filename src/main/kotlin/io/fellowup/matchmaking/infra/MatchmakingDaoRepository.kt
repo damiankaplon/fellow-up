@@ -3,8 +3,8 @@ package io.fellowup.matchmaking.infra
 import io.fellowup.matchmaking.Location
 import io.fellowup.matchmaking.Matchmaking
 import io.fellowup.matchmaking.MatchmakingRepository
-import org.jetbrains.exposed.sql.ISqlExpressionBuilder.eq
-import java.util.UUID
+import io.fellowup.matchmaking.infra.MatchmakingDao.MatchmakingsTable
+import java.util.*
 
 class MatchmakingDaoRepository : MatchmakingRepository {
 
