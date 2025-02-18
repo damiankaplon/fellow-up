@@ -26,9 +26,4 @@ class Matchmaking(
     override fun hashCode(): Int {
         return id.hashCode()
     }
-
-    data class Location(
-        val latitude: Double,
-        val longitude: Double
-    )
 }
