@@ -29,6 +29,6 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         category = category,
         userId = userId,
         at = at,
-        location = Matchmaking.Location(latitude, longitude)
+        location = Location(latitude, longitude)
     )
 }

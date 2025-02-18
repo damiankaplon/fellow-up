@@ -50,7 +50,7 @@ class MatchmakingsController(
             category = this.category,
             at = this.at.toJavaInstant(),
             userId = principal.userId,
-            location = Matchmaking.Location(this.location.lat, this.location.lng)
+            location = Location(this.location.lat, this.location.lng)
         )
     }
 
