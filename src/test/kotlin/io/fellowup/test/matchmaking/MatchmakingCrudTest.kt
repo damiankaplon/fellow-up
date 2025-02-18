@@ -1,5 +1,6 @@
 package io.fellowup.test.matchmaking
 
+import io.fellowup.matchmaking.Location
 import io.fellowup.matchmaking.Matchmaking
 import io.fellowup.matchmaking.infra.MatchmakingsController
 import io.fellowup.test.clientJson
@@ -28,6 +29,10 @@ internal class MatchmakingCrudTest {
                 MatchmakingsController.CreateMatchmakingBody(
                     category = "soccer",
                     at = Instant.parse("2021-01-01T00:00:00Z"),
+                    location = MatchmakingsController.LocationDto(
+                        lat = 0.0,
+                        lng = 0.0
+                    )
                 )
             )
 
@@ -50,7 +55,8 @@ internal class MatchmakingCrudTest {
             Matchmaking(
                 category = "SOCCER",
                 userId = UUID.randomUUID(),
-                at = "2025-02-07T16:59:00".utcInstant()
+                at = "2025-02-07T16:59:00".utcInstant(),
+                location = Location(0.0, 0.0)
             )
         )
         val loggedInUserUuid = UUID.randomUUID()
@@ -59,7 +65,8 @@ internal class MatchmakingCrudTest {
             Matchmaking(
                 category = "SOCCER",
                 userId = loggedInUserUuid!!,
-                at = "2025-02-07T17:00:00".utcInstant()
+                at = "2025-02-07T17:00:00".utcInstant(),
+                location = Location(0.0, 0.0)
             )
         )
 
