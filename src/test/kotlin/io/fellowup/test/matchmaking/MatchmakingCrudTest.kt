@@ -1,7 +1,7 @@
 package io.fellowup.test.matchmaking
 
 import io.fellowup.matchmaking.Matchmaking
-import io.fellowup.matchmaking.MatchmakingsController
+import io.fellowup.matchmaking.infra.MatchmakingsController
 import io.fellowup.test.clientJson
 import io.fellowup.test.utcInstant
 import io.ktor.client.call.*

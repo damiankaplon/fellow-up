@@ -3,7 +3,7 @@ package io.fellowup.test.matchmaking
 import io.fellowup.installAppRouting
 import io.fellowup.installSerialization
 import io.fellowup.matchmaking.MatchmakingRepository
-import io.fellowup.matchmaking.createMatchmakingModule
+import io.fellowup.matchmaking.infra.createMatchmakingModule
 import io.fellowup.test.MockJwtAuthenticationProvider
 import io.fellowup.test.MockTransactionalRunner
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
