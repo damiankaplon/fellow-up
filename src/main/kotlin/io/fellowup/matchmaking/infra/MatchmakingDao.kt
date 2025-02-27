@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
 import java.util.UUID
 
-class MatchmakingDao(id: EntityID<UUID>) : UUIDEntity(id) {
+internal class MatchmakingDao(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<MatchmakingDao>(MatchmakingsTable)
 
     var category: String by MatchmakingsTable.category

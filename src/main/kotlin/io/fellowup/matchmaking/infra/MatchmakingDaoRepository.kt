@@ -8,15 +8,19 @@ import java.util.*
 
 class MatchmakingDaoRepository : MatchmakingRepository {
 
-    override fun save(matchmaking: Matchmaking): Matchmaking {
+    override suspend fun save(matchmaking: Matchmaking): Matchmaking {
         val entity = MatchmakingDao.findByIdAndUpdate(matchmaking.id.value) { it.from(matchmaking) }
             ?: MatchmakingDao.new { this.from(matchmaking) }
         return entity.toDomain()
     }
 
-    override fun findAllByUserId(usedId: UUID): Set<Matchmaking> {
+    override suspend fun findAllByUserId(usedId: UUID): Set<Matchmaking> {
         return MatchmakingDao.find { MatchmakingsTable.user_id eq usedId }
             .map { it.toDomain() }.toSet()
+    }
+
+    override suspend fun findById(id: Matchmaking.Id): Matchmaking? {
+        return MatchmakingDao.findById(id.value)?.toDomain()
     }
 
     private fun MatchmakingDao.from(matchmaking: Matchmaking) {
@@ -32,6 +36,6 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         category = category,
         userId = userId,
         at = at,
-        location = Location(latitude, longitude)
+        location = Location(longitude, latitude)
     )
 }

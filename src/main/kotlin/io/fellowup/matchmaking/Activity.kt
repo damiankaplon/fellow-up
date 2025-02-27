@@ -1,8 +1,7 @@
 package io.fellowup.matchmaking
 
-import io.fellowup.matchmaking.Matchmaking.Id
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 class Activity(
     val id: Id = Id(),

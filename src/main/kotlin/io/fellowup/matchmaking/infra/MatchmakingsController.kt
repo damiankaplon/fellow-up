@@ -17,11 +17,11 @@ class MatchmakingsController(
     private val matchmakingRepository: MatchmakingRepository
 ) {
 
-    fun createMatchmaking(body: CreateMatchmakingBody, principal: Principal): MatchmakingDto =
+    suspend fun createMatchmaking(body: CreateMatchmakingBody, principal: Principal): MatchmakingDto =
         transactionalRunner.transaction { matchmakingRepository.save(body.toDomain(principal)) }.toDto()
 
 
-    fun getMatchmakings(principal: Principal): Collection<MatchmakingDto> =
+    suspend fun getMatchmakings(principal: Principal): Collection<MatchmakingDto> =
         transactionalRunner.transaction(readOnly = true) {
             return@transaction matchmakingRepository.findAllByUserId(principal.userId)
                 .map { it.toDto() }.toSet()
@@ -53,7 +53,7 @@ class MatchmakingsController(
             category = this.category,
             at = this.at.toJavaInstant(),
             userId = principal.userId,
-            location = Location(this.location.lat, this.location.lng)
+            location = Location(this.location.lng, this.location.lat)
         )
     }
 

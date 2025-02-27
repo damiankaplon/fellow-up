@@ -18,14 +18,14 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.*
 
-class MatchmakingsTestApp(
+internal class MatchmakingsTestApp(
     val matchmakingRepository: MatchmakingRepository,
     private val loggedInUserUuidSetter: (UUID) -> Unit
 ) {
     fun userUuid(userUuid: UUID) = loggedInUserUuidSetter(userUuid)
 }
 
-fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
+internal fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
     environment { config = ApplicationConfig("application-test.yaml") }
     createClient { install(ContentNegotiation) { json() } }
     val matchmakingRepository = MatchmakingInMemoryRepository()

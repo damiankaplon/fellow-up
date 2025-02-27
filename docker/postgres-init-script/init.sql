@@ -15,3 +15,5 @@ CREATE
 
 GRANT ALL PRIVILEGES ON DATABASE
     keycloak TO keycloak;
+
+CREATE EXTENSION postgis;
