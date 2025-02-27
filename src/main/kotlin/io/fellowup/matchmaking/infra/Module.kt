@@ -1,6 +1,7 @@
-package io.fellowup.matchmaking
+package io.fellowup.matchmaking.infra
 
 import io.fellowup.db.TransactionalRunner
+import io.fellowup.matchmaking.MatchmakingRepository
 
 fun createMatchmakingModule(
     transactionalRunner: TransactionalRunner,

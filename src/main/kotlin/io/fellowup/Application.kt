@@ -2,7 +2,7 @@ package io.fellowup
 
 import io.fellowup.db.installDatabase
 import io.fellowup.db.createTransactionalRunner
-import io.fellowup.matchmaking.createMatchmakingModule
+import io.fellowup.matchmaking.infra.createMatchmakingModule
 import io.fellowup.security.NoAuthenticatedSubjectExceptionHandler
 import io.fellowup.security.NoJwtExceptionHandler
 import io.fellowup.security.installOAuthAuth

@@ -1,7 +1,8 @@
 package io.fellowup.db
 
-import io.ktor.server.application.Application
+import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
+import java.util.*
 
 
 fun Application.installDatabase(): Database {

@@ -8,12 +8,16 @@ internal class MatchmakingInMemoryRepository : MatchmakingRepository {
 
     private val matchmakings = mutableSetOf<Matchmaking>()
 
-    override fun save(matchmaking: Matchmaking): Matchmaking {
+    override suspend fun save(matchmaking: Matchmaking): Matchmaking {
         matchmakings.add(matchmaking)
         return matchmaking
     }
 
-    override fun findAllByUserId(usedId: UUID): Set<Matchmaking> {
+    override suspend fun findAllByUserId(usedId: UUID): Set<Matchmaking> {
         return matchmakings.filter { it.userId == usedId }.toSet()
+    }
+
+    override suspend fun findById(id: Matchmaking.Id): Matchmaking? {
+        return matchmakings.find { it.id == id }
     }
 }

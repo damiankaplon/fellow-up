@@ -1,5 +1,0 @@
-db:
-  jdbcUrl: "jdbc:postgresql://localhost:5432/app_fellow_up"
-  user: "app_fellow_up"
-  password: "app_fellow_up"
-  schema: "public"

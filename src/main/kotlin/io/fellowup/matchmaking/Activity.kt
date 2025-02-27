@@ -1,12 +1,11 @@
 package io.fellowup.matchmaking
 
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
-class Matchmaking(
+class Activity(
     val id: Id = Id(),
     val category: String,
-    val userId: UUID,
     val at: Instant,
     val location: Location
 ) {
@@ -18,7 +17,7 @@ class Matchmaking(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Matchmaking
+        other as Activity
 
         return id == other.id
     }

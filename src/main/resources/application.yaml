@@ -19,7 +19,7 @@ jwt:
   issuer: "${APP_FELLOW_UP_ISSUER}:http://localhost:8282/realms/fellow_up"
 
 db:
-  jdbcUrl: "${APP_FELLOW_UP_DB_URL}:jdbc:postgresql://localhost:5432/app_fellow_up"
+  jdbcUrl: "${APP_FELLOW_UP_DB_URL}:jdbc:postgresql://localhost:5432/app_fellow_up?serverTimezone=UTC"
   user: "${APP_FELLOW_UP_DB_USER}:app_fellow_up"
   password: "${APP_FELLOW_UP_DB_PASS}:app_fellow_up"
   schema: "${APP_FELLOW_UP_DB_SCHEMA}:public"

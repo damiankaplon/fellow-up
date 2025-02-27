@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:16
+    image: ghcr.io/baosystems/postgis:15-3.5
     container_name: postgres
     environment:
       POSTGRES_USER: admin

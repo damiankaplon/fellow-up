@@ -3,7 +3,7 @@ package io.fellowup.test.matchmaking
 import io.fellowup.installAppRouting
 import io.fellowup.installSerialization
 import io.fellowup.matchmaking.MatchmakingRepository
-import io.fellowup.matchmaking.createMatchmakingModule
+import io.fellowup.matchmaking.infra.createMatchmakingModule
 import io.fellowup.test.MockJwtAuthenticationProvider
 import io.fellowup.test.MockTransactionalRunner
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -18,14 +18,14 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.*
 
-class MatchmakingsTestApp(
+internal class MatchmakingsTestApp(
     val matchmakingRepository: MatchmakingRepository,
     private val loggedInUserUuidSetter: (UUID) -> Unit
 ) {
     fun userUuid(userUuid: UUID) = loggedInUserUuidSetter(userUuid)
 }
 
-fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
+internal fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
     environment { config = ApplicationConfig("application-test.yaml") }
     createClient { install(ContentNegotiation) { json() } }
     val matchmakingRepository = MatchmakingInMemoryRepository()
