@@ -16,4 +16,5 @@ CREATE
 GRANT ALL PRIVILEGES ON DATABASE
     keycloak TO keycloak;
 
+\c app_fellow_up
 CREATE EXTENSION postgis;
