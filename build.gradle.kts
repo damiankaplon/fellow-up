@@ -51,6 +51,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("com.zaxxer:HikariCP:6.2.1")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
+    implementation("org.apache.kafka:kafka-clients:3.9.0")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
