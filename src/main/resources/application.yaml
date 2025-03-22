@@ -23,3 +23,7 @@ db:
   user: "${APP_FELLOW_UP_DB_USER}:app_fellow_up"
   password: "${APP_FELLOW_UP_DB_PASS}:app_fellow_up"
   schema: "${APP_FELLOW_UP_DB_SCHEMA}:public"
+
+kafka:
+  bootstrapServers: "${APP_FELLOW_UP_KAFKA_SERVERS}:localhost:9092"
+  clientName: "${APP_FELLOW_YP_KAFKA_CLIENT_NAME}:io-fellow-up-backend-server"
