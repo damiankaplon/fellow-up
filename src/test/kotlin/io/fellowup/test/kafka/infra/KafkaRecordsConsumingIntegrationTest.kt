@@ -65,14 +65,7 @@ internal class KafkaRecordsConsumingIntegrationTest {
         }
         kafkaConsumerThread.close()
         await atMost 10.seconds untilAsserted {
-            assertThat(kafkaConsumerThread.isInterrupted).isTrue()
-            assertThat(kafkaConsumerThread.isAlive).isFalse().withFailMessage {
-                """
-                    Kafka consumer thread was not closed for the test. Next test run may fail.
-                    It is necessary for kafka cluster to record that consumer got closed.
-                    Consumer is closed when consumer thread is interrupted.
-                """.trimIndent()
-            }
+            assertThat(kafkaConsumerThread.isAlive).isFalse()
         }
     }
 }

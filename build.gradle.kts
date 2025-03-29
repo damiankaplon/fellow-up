@@ -61,6 +61,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.16")
     testImplementation("org.assertj:assertj-core:3.27.3")
     testImplementation("io.ktor:ktor-client-content-negotiation-jvm")
+    testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
 }
 
 flyway {
