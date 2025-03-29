@@ -2,8 +2,9 @@ package io.fellowup.test.events.outbox.infra
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.fellowup.db.ExposedTransactionalRunner
-import io.fellowup.events.EventPublisher
+import io.fellowup.events.Topic
 import io.fellowup.events.outbox.infra.OutboxDao
+import io.fellowup.events.outbox.infra.OutboxPublisher
 import io.fellowup.events.outbox.infra.createOutboxPublisher
 import io.fellowup.test.DatabaseIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -13,9 +14,9 @@ internal class OutboxPublisherTest : DatabaseIntegrationTest() {
 
     data class TestEvent(val property: String)
 
-    private val testee = createOutboxPublisher<TestEvent>(
+    private val testee = OutboxPublisher<TestEvent>(
         ExposedTransactionalRunner(super.db),
-        EventPublisher.Topic("io.fellowup.test.topic")
+        Topic("io.fellowup.test.topic")
     )
 
     @Test

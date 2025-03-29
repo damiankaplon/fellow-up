@@ -4,5 +4,5 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 
 interface KafkaRecordConsumer {
     val topic: String
-    fun consume(record: ConsumerRecord<String, String>)
+    suspend fun consume(record: ConsumerRecord<String, String>)
 }

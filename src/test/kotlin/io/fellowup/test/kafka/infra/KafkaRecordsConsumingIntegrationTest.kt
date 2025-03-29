@@ -44,7 +44,7 @@ internal class KafkaRecordsConsumingIntegrationTest {
         var consumedEvents: List<String> = emptyList()
         val kafkaRecordConsumer = object : KafkaRecordConsumer {
             override val topic: String = testTopic
-            override fun consume(record: ConsumerRecord<String, String>) {
+            override suspend fun consume(record: ConsumerRecord<String, String>) {
                 consumedEvents = consumedEvents + record.value()
             }
         }

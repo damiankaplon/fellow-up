@@ -26,4 +26,5 @@ db:
 
 kafka:
   bootstrapServers: "${APP_FELLOW_UP_KAFKA_SERVERS}:localhost:9092"
+  groupId: "${APP_FELLOW_UP_KAFKA_GROUP_ID}:io-fellow-up-backend-server"
   clientName: "${APP_FELLOW_YP_KAFKA_CLIENT_NAME}:io-fellow-up-backend-server"
