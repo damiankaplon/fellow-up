@@ -24,6 +24,7 @@ fun KafkaConsumerThread(
                 consumerRecords.records(kafkaRecordConsumer.topic).forEach { record ->
                     kafkaRecordConsumer.consume(record)
                 }
+                kafkaConsumer.commitSync()
             }
         } catch (e: Throwable) {
             logger.error("Error consuming kafka events for: ${kafkaRecordConsumer.topic}", e)
