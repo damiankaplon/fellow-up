@@ -57,5 +57,4 @@ internal class KObjectMapperSerializerTest {
         val resultString = String(result!!)
         assertThat(resultString).isEqualTo("{\"id\":1,\"property\":\"test\"}")
     }
-
 }

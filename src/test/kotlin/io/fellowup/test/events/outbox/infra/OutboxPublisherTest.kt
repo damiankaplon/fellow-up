@@ -5,7 +5,6 @@ import io.fellowup.db.ExposedTransactionalRunner
 import io.fellowup.events.Topic
 import io.fellowup.events.outbox.infra.OutboxDao
 import io.fellowup.events.outbox.infra.OutboxPublisher
-import io.fellowup.events.outbox.infra.createOutboxPublisher
 import io.fellowup.test.DatabaseIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
