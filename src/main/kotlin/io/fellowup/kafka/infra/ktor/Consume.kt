@@ -31,6 +31,7 @@ inline fun <reified T> Application.consume(
     }
     monitor.subscribe(ApplicationStopping) {
         kafkaConsumerThread.close()
+        kafkaConsumerThread.join()
     }
 
 }
