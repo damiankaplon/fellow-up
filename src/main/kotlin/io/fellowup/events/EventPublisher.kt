@@ -5,7 +5,7 @@ package io.fellowup.events
  */
 interface EventPublisher<T> {
 
-    fun publish(event: T, topic: String? = null)
+    suspend fun publish(event: T, topic: Topic? = null)
 
-    fun publish(events: Set<T>, topic: String? = null) = events.forEach { publish(it, topic) }
+    suspend fun publish(events: Set<T>, topic: Topic? = null) = events.forEach { publish(it, topic) }
 }

@@ -8,7 +8,15 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 internal abstract class DatabaseIntegrationTest {
     protected val db = TestDatabaseConnectionProvider.provide()
 
-    protected fun test(test: suspend Transaction.() -> Unit) = runBlocking {
-        newSuspendedTransaction(Dispatchers.Default, db = db) { test(); rollback() }
+    protected fun test(test: suspend Transaction.() -> Unit): Unit = runBlocking {
+        newSuspendedTransaction(Dispatchers.Default, db = db) {
+            try {
+                test()
+            } catch (e: Throwable) {
+                throw e
+            } finally {
+                rollback()
+            }
+        }
     }
 }

@@ -1,10 +1,12 @@
 package io.fellowup.matchmaking.infra
 
 import io.fellowup.db.TransactionalRunner
+import io.fellowup.events.EventPublisher
 import io.fellowup.kotlinx.serialization.Uuid
 import io.fellowup.kotlinx.serialization.toKotlinx
 import io.fellowup.matchmaking.Location
 import io.fellowup.matchmaking.Matchmaking
+import io.fellowup.matchmaking.MatchmakingEvent
 import io.fellowup.matchmaking.MatchmakingRepository
 import io.fellowup.security.Principal
 import kotlinx.datetime.Instant
@@ -14,11 +16,16 @@ import kotlinx.serialization.Serializable
 
 class MatchmakingsController(
     private val transactionalRunner: TransactionalRunner,
-    private val matchmakingRepository: MatchmakingRepository
+    private val matchmakingRepository: MatchmakingRepository,
+    private val matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>
 ) {
 
     suspend fun createMatchmaking(body: CreateMatchmakingBody, principal: Principal): MatchmakingDto =
-        transactionalRunner.transaction { matchmakingRepository.save(body.toDomain(principal)) }.toDto()
+        transactionalRunner.transaction {
+            val matchmaking = matchmakingRepository.save(body.toDomain(principal))
+            matchmakingEventsPublisher.publish(MatchmakingEvent.MatchmakingCreated(matchmaking.id))
+            return@transaction matchmaking.toDto()
+        }
 
 
     suspend fun getMatchmakings(principal: Principal): Collection<MatchmakingDto> =
