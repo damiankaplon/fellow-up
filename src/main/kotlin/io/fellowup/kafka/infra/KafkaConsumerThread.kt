@@ -15,26 +15,27 @@ fun KafkaConsumerThread(
     transactionalRunner: TransactionalRunner,
     threadName: String = "kafka-consumer-${kafkaRecordConsumer.topic}-${UUID.randomUUID()}",
     logger: org.slf4j.Logger = LoggerFactory.getLogger(threadName)
-): KafkaConsumerThread = KafkaConsumerThread(threadName, kafkaConsumerProperties) { kafkaConsumer ->
-    runBlocking {
-        try {
-            transactionalRunner.transaction {
-                kafkaConsumer.subscribe(listOf(kafkaRecordConsumer.topic))
-                val consumerRecords = kafkaConsumer.poll(300.milliseconds.toJavaDuration())
-                consumerRecords.records(kafkaRecordConsumer.topic).forEach { record ->
-                    kafkaRecordConsumer.consume(record)
+): KafkaConsumerThread =
+    KafkaConsumerThread(threadName, kafkaConsumerProperties, kafkaRecordConsumer.topic) { kafkaConsumer ->
+        runBlocking {
+            try {
+                transactionalRunner.transaction {
+                    val consumerRecords = kafkaConsumer.poll(300.milliseconds.toJavaDuration())
+                    consumerRecords.records(kafkaRecordConsumer.topic).forEach { record ->
+                        kafkaRecordConsumer.consume(record)
+                    }
+                    kafkaConsumer.commitSync()
                 }
-                kafkaConsumer.commitSync()
+            } catch (e: Throwable) {
+                logger.error("Error consuming kafka events for: ${kafkaRecordConsumer.topic}", e)
             }
-        } catch (e: Throwable) {
-            logger.error("Error consuming kafka events for: ${kafkaRecordConsumer.topic}", e)
         }
     }
-}
 
 class KafkaConsumerThread(
     name: String,
     kafkaConsumerProperties: Properties,
+    private val topic: String,
     private val block: (KafkaConsumer<String, String>) -> Unit
 ) : Thread(name) {
 
@@ -43,6 +44,7 @@ class KafkaConsumerThread(
     private val isClosed = AtomicBoolean(false)
 
     override fun run() {
+        kafkaConsumer.subscribe(listOf(topic))
         while (isToClose.get().not()) {
             block.invoke(kafkaConsumer)
         }
