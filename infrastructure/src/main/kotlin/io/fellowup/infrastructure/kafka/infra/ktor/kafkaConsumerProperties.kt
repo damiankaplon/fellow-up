@@ -13,7 +13,7 @@ fun ApplicationConfig.kafkaConsumerProperties(): Properties {
         this.propertyOrNull("kafka.keyDeserializer")?.getString() ?: StringDeserializer::class.qualifiedName
     val valueDeserializer =
         this.propertyOrNull("kafka.valueDeserializer")?.getString() ?: StringDeserializer::class.qualifiedName
-    val autoOffsetReset = this.propertyOrNull("kafka.autoOffsetReset")?.getString() ?: "latest"
+    val autoOffsetReset = this.propertyOrNull("kafka.autoOffsetReset")?.getString() ?: "earliest"
     val enableAutoCommit = this.propertyOrNull("kafka.enableAutoCommit")?.getString()?.toBoolean() ?: false
 
     val properties = mapOf(
