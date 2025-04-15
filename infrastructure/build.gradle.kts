@@ -45,6 +45,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-server-status-pages")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.postgresql:postgresql:$postgresql_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
@@ -56,6 +57,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3")
     implementation("org.apache.kafka:kafka-clients:3.9.0")
+
 
     testImplementation(testFixtures(project(":domain")))
     testImplementation("io.ktor:ktor-server-test-host-jvm")
