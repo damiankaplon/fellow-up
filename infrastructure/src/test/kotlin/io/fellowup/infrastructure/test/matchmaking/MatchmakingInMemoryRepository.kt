@@ -1,8 +1,10 @@
 package io.fellowup.infrastructure.test.matchmaking
 
+import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.domain.matchmaking.MatchmakingRepository
-import java.util.UUID
+import java.time.Instant
+import java.util.*
 
 internal class MatchmakingInMemoryRepository : MatchmakingRepository {
 
@@ -19,5 +21,15 @@ internal class MatchmakingInMemoryRepository : MatchmakingRepository {
 
     override suspend fun findById(id: Matchmaking.Id): Matchmaking? {
         return matchmakings.find { it.id == id }
+    }
+
+    override suspend fun findDistanceWithinAndTimeDiffWithinAndCategory(
+        category: String,
+        location: Location,
+        maxMetersDiff: Int,
+        time: Instant,
+        maxMinutesDiff: Int
+    ): Set<Matchmaking> {
+        return emptySet()
     }
 }

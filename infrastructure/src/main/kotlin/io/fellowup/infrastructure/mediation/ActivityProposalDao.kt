@@ -19,7 +19,8 @@ internal class ActivityProposalDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var time by ActivityProposalsTable.time
     var longitude by ActivityProposalsTable.longitude
     var latitude by ActivityProposalsTable.latitude
-    val acceptedByParticipantIds by ActivityProposalsTable.acceptedByParticipantIds
+    var acceptedByParticipantIds by ActivityProposalsTable.acceptedByParticipantIds
+    var mediation by MediationDao referencedOn ActivityProposalsTable.mediation
 
     fun toDomain(): ActivityProposal {
         val proposal = ActivityProposal(
@@ -40,13 +41,11 @@ internal class ActivityProposalDao(id: EntityID<UUID>) : UUIDEntity(id) {
 
 
         val order = integer("order_number")
-        val mediation = reference("mediation_id", MediationDao.MediationsTable, onDelete = ReferenceOption.NO_ACTION)
+        val mediation = reference("mediation_id", MediationDao.MediationsTable, onDelete = ReferenceOption.CASCADE)
         val time = timestamp("time")
         val longitude = double("longitude")
         val latitude = double("latitude")
         val acceptedByParticipantIds =
             jsonb("accepted_by_participant_ids", JSONB_PARTICIPANTS_SERIALIZER, JSONB_PARTICIPANTS_DESERIALIZER)
     }
-
-
 }

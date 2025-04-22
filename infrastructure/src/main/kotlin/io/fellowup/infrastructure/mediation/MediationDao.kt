@@ -45,5 +45,4 @@ internal fun MediationDao.from(mediation: Mediation) {
     this.category = mediation.category
     this.isFinished = mediation.isFinished
     this.participants = mediation.getPrivateProperty<Mediation, Set<ParticipantId>>(MediationDao::participants.name)
-    this.proposals.forUpdate().
 }

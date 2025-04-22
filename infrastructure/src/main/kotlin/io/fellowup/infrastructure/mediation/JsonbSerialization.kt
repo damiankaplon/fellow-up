@@ -4,7 +4,13 @@ import io.fellowup.domain.mediation.ParticipantId
 import java.util.*
 
 val JSONB_PARTICIPANTS_SERIALIZER: (Set<ParticipantId>) -> String =
-    { participants -> participants.map { it.id }.joinToString(",") }
+    { participants -> "[" + participants.joinToString(",") { "\"${it.id}\"" } + "]" }
 
 val JSONB_PARTICIPANTS_DESERIALIZER: (String) -> Set<ParticipantId> =
-    { participants -> participants.split(",").map { ParticipantId(UUID.fromString(it)) }.toSet() }
+    { participants ->
+        participants.removePrefix("[")
+            .removeSuffix("]")
+            .split(",")
+            .map { it.removePrefix("\"").removeSuffix("\"").let { uuid -> ParticipantId(UUID.fromString(uuid)) } }
+            .toSet()
+    }

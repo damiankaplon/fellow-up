@@ -1,4 +1,4 @@
-package io.fellowup.matchmaking.infra
+package io.fellowup.infrastructure.matchmaking.infra
 
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
