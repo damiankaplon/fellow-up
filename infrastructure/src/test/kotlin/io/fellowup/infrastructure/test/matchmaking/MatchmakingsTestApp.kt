@@ -7,6 +7,7 @@ import io.fellowup.infrastructure.installAppRouting
 import io.fellowup.infrastructure.installSerialization
 import io.fellowup.infrastructure.matchmaking.infra.createMatchmakingModule
 import io.fellowup.infrastructure.test.MockJwtAuthenticationProvider
+import io.fellowup.infrastructure.test.mediation.MediationInMemoryRepository
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -30,11 +31,18 @@ internal fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
     environment { config = ApplicationConfig("application-test.yaml") }
     createClient { install(ContentNegotiation) { json() } }
     val matchmakingRepository = MatchmakingInMemoryRepository()
+    val activityRepository = ActivityInMemoryRepository()
+    val mediationRepository = MediationInMemoryRepository()
     var jwtPrincipal: JWTPrincipal? = null
     application {
         installSerialization()
-        val matchmakingModule =
-            createMatchmakingModule(MockTransactionalRunner(), NopEventPublisher(), matchmakingRepository)
+        val matchmakingModule = createMatchmakingModule(
+            MockTransactionalRunner(),
+            NopEventPublisher(),
+            matchmakingRepository,
+            activityRepository,
+            mediationRepository
+        )
         val mockJwtConfig = MockJwtAuthenticationProvider.Config(jwtPrincipal)
         val jwtProvider = MockJwtAuthenticationProvider(mockJwtConfig)
         install(Authentication) { register(jwtProvider) }

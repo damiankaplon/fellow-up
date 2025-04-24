@@ -17,7 +17,6 @@ fun createMatchmakingModule(
         matchmakingRepository,
         mediationRepository,
         activityRepository,
-        PlainKotlinDistanceCalculator(),
         matchmakingEventsPublisher
     )
     return MatchmakingsModule(

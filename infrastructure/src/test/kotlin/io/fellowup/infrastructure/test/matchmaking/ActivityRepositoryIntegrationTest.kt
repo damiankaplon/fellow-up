@@ -2,9 +2,9 @@ package io.fellowup.infrastructure.test.matchmaking
 
 import io.fellowup.domain.matchmaking.Activity
 import io.fellowup.domain.matchmaking.Location
+import io.fellowup.domain.test.fixtures.utcInstant
 import io.fellowup.infrastructure.matchmaking.infra.ActivityDaoRepository
 import io.fellowup.infrastructure.test.DatabaseIntegrationTest
-import io.fellowup.domain.test.fixtures.utcInstant
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.dao.flushCache
 import kotlin.test.Test
@@ -35,7 +35,7 @@ internal class ActivityRepositoryIntegrationTest : DatabaseIntegrationTest() {
         flushCache()
 
         // When
-        val result: Set<Activity> = activityRepository.findDistanceWithinAndTimeDiffWithin(
+        val result: Set<Activity> = activityRepository.findMatchingTo(
             location = Location(54.187567, 16.190301),
             maxMetersDiff = 10_000,
             time = "2025-02-14T17:00:00".utcInstant(),
@@ -72,7 +72,7 @@ internal class ActivityRepositoryIntegrationTest : DatabaseIntegrationTest() {
         flushCache()
 
         // When
-        val result: Set<Activity> = activityRepository.findDistanceWithinAndTimeDiffWithin(
+        val result: Set<Activity> = activityRepository.findMatchingTo(
             location = Location(54.183267, 16.194264),
             maxMetersDiff = 1,
             time = "2025-02-14T16:00:00".utcInstant(),
@@ -105,7 +105,7 @@ internal class ActivityRepositoryIntegrationTest : DatabaseIntegrationTest() {
         flushCache()
 
         // When
-        val result: Set<Activity> = activityRepository.findDistanceWithinAndTimeDiffWithin(
+        val result: Set<Activity> = activityRepository.findMatchingTo(
             location = Location(54.187567, 16.190301),
             maxMetersDiff = 10_000,
             time = "2025-02-14T17:00:00".utcInstant(),

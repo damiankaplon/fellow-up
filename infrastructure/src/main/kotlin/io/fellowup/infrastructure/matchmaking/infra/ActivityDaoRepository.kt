@@ -18,7 +18,7 @@ class ActivityDaoRepository : ActivityRepository {
         return entity.toActivity()
     }
 
-    override suspend fun findDistanceWithinAndTimeDiffWithin(
+    override suspend fun findMatchingTo(
         location: Location,
         maxMetersDiff: Int,
         time: Instant,

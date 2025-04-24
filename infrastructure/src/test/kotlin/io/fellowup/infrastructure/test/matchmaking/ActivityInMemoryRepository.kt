@@ -1,44 +1,36 @@
 package io.fellowup.infrastructure.test.matchmaking
 
+import io.fellowup.domain.matchmaking.Activity
+import io.fellowup.domain.matchmaking.ActivityRepository
 import io.fellowup.domain.matchmaking.Location
-import io.fellowup.domain.matchmaking.Matchmaking
-import io.fellowup.domain.matchmaking.MatchmakingRepository
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-internal class MatchmakingInMemoryRepository : MatchmakingRepository {
+internal class ActivityInMemoryRepository : ActivityRepository {
 
-    private val matchmakings = mutableSetOf<Matchmaking>()
+    private val activities = mutableSetOf<Activity>()
 
-    override suspend fun save(matchmaking: Matchmaking): Matchmaking {
-        matchmakings.add(matchmaking)
-        return matchmaking
-    }
-
-    override suspend fun findAllByUserId(usedId: UUID): Set<Matchmaking> {
-        return matchmakings.filter { it.userId == usedId }.toSet()
-    }
-
-    override suspend fun findById(id: Matchmaking.Id): Matchmaking? {
-        return matchmakings.find { it.id == id }
+    override suspend fun save(activity: Activity): Activity {
+        activities.add(activity)
+        return activity
     }
 
     override suspend fun findMatchingTo(
-        category: String,
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
         maxMinutesDiff: Int
-    ): Set<Matchmaking> {
-        return matchmakings.filter { it.category == category }
+    ): Set<Activity> {
+        val minTime = time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
+        val maxTime = time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
+
+        return activities
             .filter {
-                it.at.isAfter(time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)) ||
-                        it.at.isBefore(time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES))
+                it.at.isAfter(minTime) && it.at.isBefore(maxTime)
             }
             .filter {
                 haversineDistance(
@@ -46,7 +38,7 @@ internal class MatchmakingInMemoryRepository : MatchmakingRepository {
                     it.location.longitude,
                     location.latitude,
                     location.longitude
-                ) < maxMetersDiff
+                ) <= maxMetersDiff
             }
             .toSet()
     }

@@ -28,7 +28,7 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         return MatchmakingDao.findById(id.value)?.toMatchmaking()
     }
 
-    override suspend fun findDistanceWithinAndTimeDiffWithinAndCategory(
+    override suspend fun findMatchingTo(
         category: String,
         location: Location,
         maxMetersDiff: Int,
