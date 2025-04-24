@@ -1,17 +1,14 @@
 package io.fellowup.infrastructure.matchmaking.infra
 
+import MetersBetween
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.domain.matchmaking.MatchmakingRepository
-import io.fellowup.infrastructure.matchmaking.infra.ActivityDao.ActivitiesTable
 import io.fellowup.infrastructure.matchmaking.infra.MatchmakingDao.MatchmakingsTable
-import io.fellowup.java.toUUID
-import org.jetbrains.exposed.sql.IntegerColumnType
-import org.jetbrains.exposed.sql.TextColumnType
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.withSuspendTransaction
-import java.sql.ResultSet
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.doubleParam
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class MatchmakingDaoRepository : MatchmakingRepository {
@@ -37,43 +34,17 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         maxMetersDiff: Int,
         time: Instant,
         maxMinutesDiff: Int
-    ): Set<Matchmaking> = TransactionManager.current().withSuspendTransaction {
-        val query = """
-                SELECT id 
-                FROM matchmaking 
-                WHERE at BETWEEN 
-                            (TO_TIMESTAMP(?) - make_interval(0, 0, 0, 0, 0, ?, 0)) 
-                                AND 
-                            (TO_TIMESTAMP(?) + make_interval(0, 0, 0, 0, 0, ?, 0)) 
-                    AND (ST_DISTANCE(
-                            st_setsrid(ST_MakePoint(longitude, latitude), 4326)::geography,
-                            st_setsrid(ST_MakePoint(?, ?), 4326)::geography
-                        ) <= ?
-                    )
-                    AND category = ?;
-                """.trimIndent()
-        val similarMatchmakingIds: List<UUID> = exec(
-            stmt = query, args = listOf(
-                IntegerColumnType() to time.epochSecond,
-                IntegerColumnType() to maxMinutesDiff,
-                IntegerColumnType() to time.epochSecond,
-                IntegerColumnType() to maxMinutesDiff,
-                ActivitiesTable.longitude.columnType to location.longitude,
-                ActivitiesTable.latitude.columnType to location.latitude,
-                IntegerColumnType() to maxMetersDiff,
-                TextColumnType() to category
-            )
-        ) { resultSet: ResultSet? ->
-            val result = mutableListOf<UUID>()
-            while (resultSet != null && resultSet.next()) {
-                result.add(resultSet.getString(1).toUUID())
-            }
-            result
-        }?.toList() ?: emptyList()
-        return@withSuspendTransaction MatchmakingDao.find { (ActivitiesTable.id inList similarMatchmakingIds) }
-            .map { it.toMatchmaking() }
-            .toSet()
-    }
+    ): Set<Matchmaking> = MatchmakingDao.find {
+        MatchmakingsTable.category eq category and MatchmakingsTable.at.between(
+            time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES),
+            time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
+        ) and MetersBetween(
+            MatchmakingsTable.longitude,
+            MatchmakingsTable.latitude,
+            doubleParam(location.longitude),
+            doubleParam(location.latitude)
+        ).lessEq(maxMetersDiff.toFloat())
+    }.mapTo(linkedSetOf()) { it.toMatchmaking() }
 
     private fun MatchmakingDao.from(matchmaking: Matchmaking) {
         this.category = matchmaking.category
