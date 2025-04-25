@@ -3,17 +3,20 @@ package io.fellowup.infrastructure.matchmaking.infra
 import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.events.EventPublisher
 import io.fellowup.domain.matchmaking.*
+import io.fellowup.domain.mediation.MediationRepository
+import io.fellowup.infrastructure.mediation.MediationDaoRepository
 
 fun createMatchmakingModule(
     transactionalRunner: TransactionalRunner,
     matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>,
     matchmakingRepository: MatchmakingRepository = MatchmakingDaoRepository(),
     activityRepository: ActivityRepository = ActivityDaoRepository(),
+    mediationRepository: MediationRepository = MediationDaoRepository(),
 ): MatchmakingsModule {
     val matchmakingService = MatchmakingService(
         matchmakingRepository,
+        mediationRepository,
         activityRepository,
-        PlainKotlinDistanceCalculator(),
         matchmakingEventsPublisher
     )
     return MatchmakingsModule(

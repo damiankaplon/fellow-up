@@ -1,65 +1,39 @@
 package io.fellowup.infrastructure.matchmaking.infra
 
-import io.fellowup.java.toUUID
+import MetersBetween
 import io.fellowup.domain.matchmaking.Activity
 import io.fellowup.domain.matchmaking.ActivityRepository
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.infrastructure.matchmaking.infra.ActivityDao.ActivitiesTable
-import org.jetbrains.exposed.sql.IntegerColumnType
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.withSuspendTransaction
-import java.sql.ResultSet
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.doubleParam
 import java.time.Instant
-import java.util.*
+import java.time.temporal.ChronoUnit
 
 class ActivityDaoRepository : ActivityRepository {
 
     override suspend fun save(activity: Activity): Activity {
         val entity = ActivityDao.findByIdAndUpdate(activity.id.value) { it.from(activity) }
-            ?: ActivityDao.new { this.from(activity) }
+            ?: ActivityDao.new(id = activity.id.value) { this.from(activity) }
         return entity.toActivity()
     }
 
-    override suspend fun findDistanceWithinAndTimeDiffWithin(
+    override suspend fun findMatchingTo(
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
-        maxMinutesDiff: Int
-    ): Set<Activity> = TransactionManager.current().withSuspendTransaction {
-        val query = """
-                SELECT id 
-                FROM activity 
-                WHERE at BETWEEN 
-                            (TO_TIMESTAMP(?) - make_interval(0, 0, 0, 0, 0, ?, 0)) 
-                                AND 
-                            (TO_TIMESTAMP(?) + make_interval(0, 0, 0, 0, 0, ?, 0)) 
-                    AND (ST_DISTANCE(
-                            st_setsrid(ST_MakePoint(longitude, latitude), 4326)::geography,
-                            st_setsrid(ST_MakePoint(?, ?), 4326)::geography
-                        ) <= ?
-                    );
-                """.trimIndent()
-        val matchingActivityIds: List<UUID> = exec(
-            stmt = query, args = listOf(
-                IntegerColumnType() to time.epochSecond,
-                IntegerColumnType() to maxMinutesDiff,
-                IntegerColumnType() to time.epochSecond,
-                IntegerColumnType() to maxMinutesDiff,
-                ActivitiesTable.longitude.columnType to location.longitude,
-                ActivitiesTable.latitude.columnType to location.latitude,
-                IntegerColumnType() to maxMetersDiff
-            )
-        ) { resultSet: ResultSet? ->
-            val result = mutableListOf<UUID>()
-            while (resultSet != null && resultSet.next()) {
-                result.add(resultSet.getString(1).toUUID())
-            }
-            result
-        }?.toList() ?: emptyList()
-        return@withSuspendTransaction ActivityDao.find { (ActivitiesTable.id inList matchingActivityIds) }
-            .map { it.toActivity() }
-            .toSet()
-    }
+        maxSecondsDiff: Int
+    ): Set<Activity> = ActivityDao.find {
+        ActivitiesTable.at.between(
+            time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS),
+            time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
+        ) and MetersBetween(
+            ActivitiesTable.longitude,
+            ActivitiesTable.latitude,
+            doubleParam(location.longitude),
+            doubleParam(location.latitude)
+        ).lessEq(maxMetersDiff.toFloat())
+    }.mapTo(linkedSetOf()) { it.toActivity() }
 
     private fun ActivityDao.from(activity: Activity) {
         this.category = activity.category

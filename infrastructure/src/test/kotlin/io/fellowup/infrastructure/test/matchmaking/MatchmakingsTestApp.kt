@@ -3,6 +3,9 @@ package io.fellowup.infrastructure.test.matchmaking
 import io.fellowup.domain.matchmaking.MatchmakingRepository
 import io.fellowup.domain.test.fixtures.db.MockTransactionalRunner
 import io.fellowup.domain.test.fixtures.events.NopEventPublisher
+import io.fellowup.domain.test.fixtures.matchmaking.ActivityInMemoryRepository
+import io.fellowup.domain.test.fixtures.matchmaking.MatchmakingInMemoryRepository
+import io.fellowup.domain.test.fixtures.mediation.MediationInMemoryRepository
 import io.fellowup.infrastructure.installAppRouting
 import io.fellowup.infrastructure.installSerialization
 import io.fellowup.infrastructure.matchmaking.infra.createMatchmakingModule
@@ -30,11 +33,18 @@ internal fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
     environment { config = ApplicationConfig("application-test.yaml") }
     createClient { install(ContentNegotiation) { json() } }
     val matchmakingRepository = MatchmakingInMemoryRepository()
+    val activityRepository = ActivityInMemoryRepository()
+    val mediationRepository = MediationInMemoryRepository()
     var jwtPrincipal: JWTPrincipal? = null
     application {
         installSerialization()
-        val matchmakingModule =
-            createMatchmakingModule(MockTransactionalRunner(), NopEventPublisher(), matchmakingRepository)
+        val matchmakingModule = createMatchmakingModule(
+            MockTransactionalRunner(),
+            NopEventPublisher(),
+            matchmakingRepository,
+            activityRepository,
+            mediationRepository
+        )
         val mockJwtConfig = MockJwtAuthenticationProvider.Config(jwtPrincipal)
         val jwtProvider = MockJwtAuthenticationProvider(mockJwtConfig)
         install(Authentication) { register(jwtProvider) }
