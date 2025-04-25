@@ -14,7 +14,7 @@ class ActivityDaoRepository : ActivityRepository {
 
     override suspend fun save(activity: Activity): Activity {
         val entity = ActivityDao.findByIdAndUpdate(activity.id.value) { it.from(activity) }
-            ?: ActivityDao.new { this.from(activity) }
+            ?: ActivityDao.new(id = activity.id.value) { this.from(activity) }
         return entity.toActivity()
     }
 

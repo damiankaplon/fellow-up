@@ -15,7 +15,7 @@ class MatchmakingDaoRepository : MatchmakingRepository {
 
     override suspend fun save(matchmaking: Matchmaking): Matchmaking {
         val entity = MatchmakingDao.findByIdAndUpdate(matchmaking.id.value) { it.from(matchmaking) }
-            ?: MatchmakingDao.new { this.from(matchmaking) }
+            ?: MatchmakingDao.new(id = matchmaking.id.value) { this.from(matchmaking) }
         return entity.toMatchmaking()
     }
 
