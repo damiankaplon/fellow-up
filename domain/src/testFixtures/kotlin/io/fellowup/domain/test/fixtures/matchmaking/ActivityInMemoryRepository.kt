@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.test.matchmaking
+package io.fellowup.domain.test.fixtures.matchmaking
 
 import haversineDistance
 import io.fellowup.domain.matchmaking.Activity
@@ -7,7 +7,7 @@ import io.fellowup.domain.matchmaking.Location
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-internal class ActivityInMemoryRepository : ActivityRepository {
+class ActivityInMemoryRepository : ActivityRepository {
 
     private val activities = mutableSetOf<Activity>()
 
@@ -20,10 +20,10 @@ internal class ActivityInMemoryRepository : ActivityRepository {
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
-        maxMinutesDiff: Int
+        maxSecondsDiff: Int
     ): Set<Activity> {
-        val minTime = time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
-        val maxTime = time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
+        val minTime = time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
+        val maxTime = time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
 
         return activities
             .filter {

@@ -3,11 +3,13 @@ package io.fellowup.infrastructure.test.matchmaking
 import io.fellowup.domain.matchmaking.MatchmakingRepository
 import io.fellowup.domain.test.fixtures.db.MockTransactionalRunner
 import io.fellowup.domain.test.fixtures.events.NopEventPublisher
+import io.fellowup.domain.test.fixtures.matchmaking.ActivityInMemoryRepository
+import io.fellowup.domain.test.fixtures.matchmaking.MatchmakingInMemoryRepository
+import io.fellowup.domain.test.fixtures.mediation.MediationInMemoryRepository
 import io.fellowup.infrastructure.installAppRouting
 import io.fellowup.infrastructure.installSerialization
 import io.fellowup.infrastructure.matchmaking.infra.createMatchmakingModule
 import io.fellowup.infrastructure.test.MockJwtAuthenticationProvider
-import io.fellowup.infrastructure.test.mediation.MediationInMemoryRepository
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*

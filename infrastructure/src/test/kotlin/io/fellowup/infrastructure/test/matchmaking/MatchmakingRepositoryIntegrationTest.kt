@@ -48,7 +48,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
             location = Location(54.187567, 16.190301),
             maxMetersDiff = 10_000,
             time = "2025-02-14T17:00:00".utcInstant(),
-            maxMinutesDiff = 60
+            maxSecondsDiff = 7200
         )
 
         // Then
@@ -91,7 +91,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
             location = Location(54.183267, 16.194264),
             maxMetersDiff = 1,
             time = "2025-02-14T16:00:00".utcInstant(),
-            maxMinutesDiff = 60
+            maxSecondsDiff = 60
         )
 
         // Then
@@ -129,7 +129,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
             location = Location(54.187567, 16.190301),
             maxMetersDiff = 10_000,
             time = "2025-02-14T17:00:00".utcInstant(),
-            maxMinutesDiff = 59
+            maxSecondsDiff = 59
         )
 
         // Then
@@ -167,7 +167,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
             location = Location(54.187567, 16.190301),
             maxMetersDiff = 10_000,
             time = "2025-02-14T16:00:00".utcInstant(),
-            maxMinutesDiff = 60
+            maxSecondsDiff = 60
         )
 
         // Then

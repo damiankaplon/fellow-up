@@ -10,6 +10,6 @@ interface ActivityRepository {
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
-        maxMinutesDiff: Int
+        maxSecondsDiff: Int
     ): Set<Activity>
 }

@@ -4,7 +4,7 @@ import io.fellowup.domain.events.EventPublisher
 import io.fellowup.domain.matchmaking.MatchmakingEvent.ActivityMatched
 import io.fellowup.domain.mediation.Mediation
 import io.fellowup.domain.mediation.MediationRepository
-import io.fellowup.domain.mediation.ParticipantId
+import java.util.*
 
 private const val TEN_KM_IN_METERS: Int = 10000
 private const val TWO_HOURS_IN_SECONDS: Int = 120 * 60
@@ -36,15 +36,15 @@ class MatchmakingService(
             location = matchmaking.location,
             maxMetersDiff = TEN_KM_IN_METERS,
             time = matchmaking.at,
-            maxMinutesDiff = TWO_HOURS_IN_SECONDS
+            maxSecondsDiff = TWO_HOURS_IN_SECONDS
         )
-        if (similarMatchmakings.size < 3) return
-        val mediationMatchmakings = similarMatchmakings.take(3)
-        val mediation = Mediation(
-            category = matchmaking.category,
-            participants = mediationMatchmakings.map { ParticipantId(it.userId) }.toSet()
-        )
-        mediationMatchmakings.forEach { mediation.propose(it.location, it.at) }
+        val groupedSimilarMatchmakings: Map<UUID, List<Matchmaking>> = similarMatchmakings.groupBy { it.userId }
+
+        if (groupedSimilarMatchmakings.keys.size < 3) return
+        val mediationMatchmakings = groupedSimilarMatchmakings.keys.take(3).map { userId: UUID ->
+            groupedSimilarMatchmakings.getValue(userId).first()
+        }.toSet()
+        val mediation = Mediation(mediationMatchmakings)
         mediationRepository.save(mediation)
     }
 }

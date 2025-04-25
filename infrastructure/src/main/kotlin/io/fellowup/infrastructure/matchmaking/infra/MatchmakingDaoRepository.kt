@@ -33,11 +33,11 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
-        maxMinutesDiff: Int
+        maxSecondsDiff: Int
     ): Set<Matchmaking> = MatchmakingDao.find {
         MatchmakingsTable.category eq category and MatchmakingsTable.at.between(
-            time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES),
-            time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
+            time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS),
+            time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
         ) and MetersBetween(
             MatchmakingsTable.longitude,
             MatchmakingsTable.latitude,

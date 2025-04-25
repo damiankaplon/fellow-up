@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.test.matchmaking
+package io.fellowup.domain.test.fixtures.matchmaking
 
 import haversineDistance
 import io.fellowup.domain.matchmaking.Location
@@ -8,7 +8,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-internal class MatchmakingInMemoryRepository : MatchmakingRepository {
+class MatchmakingInMemoryRepository : MatchmakingRepository {
 
     private val matchmakings = mutableSetOf<Matchmaking>()
 
@@ -30,12 +30,12 @@ internal class MatchmakingInMemoryRepository : MatchmakingRepository {
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
-        maxMinutesDiff: Int
+        maxSecondsDiff: Int
     ): Set<Matchmaking> {
         return matchmakings.filter { it.category == category }
             .filter {
-                it.at.isAfter(time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)) ||
-                        it.at.isBefore(time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES))
+                it.at.isAfter(time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)) ||
+                        it.at.isBefore(time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS))
             }
             .filter {
                 haversineDistance(

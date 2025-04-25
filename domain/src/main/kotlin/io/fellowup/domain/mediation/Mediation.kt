@@ -1,6 +1,7 @@
 package io.fellowup.domain.mediation
 
 import io.fellowup.domain.matchmaking.Location
+import io.fellowup.domain.matchmaking.Matchmaking
 import java.time.Instant
 import java.util.*
 
@@ -52,4 +53,17 @@ class Mediation(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+}
+
+fun Mediation(matchmakings: Set<Matchmaking>): Mediation {
+    require(matchmakings.map { it.userId }.toSet().size == matchmakings.size)
+    { "All matchmakings must belong to different users" }
+    require(matchmakings.map { it.category }.toSet().size == 1)
+    { "All matchmakings must have the same category" }
+    val mediation = Mediation(
+        category = matchmakings.first().category,
+        participants = matchmakings.map { ParticipantId(it.userId) }.toSet()
+    )
+    matchmakings.forEach { mediation.propose(it.location, it.at) }
+    return mediation
 }

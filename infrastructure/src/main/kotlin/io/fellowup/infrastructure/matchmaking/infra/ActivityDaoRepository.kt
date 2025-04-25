@@ -22,11 +22,11 @@ class ActivityDaoRepository : ActivityRepository {
         location: Location,
         maxMetersDiff: Int,
         time: Instant,
-        maxMinutesDiff: Int
+        maxSecondsDiff: Int
     ): Set<Activity> = ActivityDao.find {
         ActivitiesTable.at.between(
-            time.minus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES),
-            time.plus(maxMinutesDiff.toLong(), ChronoUnit.MINUTES)
+            time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS),
+            time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
         ) and MetersBetween(
             ActivitiesTable.longitude,
             ActivitiesTable.latitude,
