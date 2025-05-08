@@ -7,9 +7,22 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 internal abstract class DatabaseIntegrationTest {
     protected val db = TestDatabaseConnectionProvider.provide()
+    protected val keycloakDb = TestKeycloakDatabaseConnectionProvider.provide()
 
-    protected fun test(test: suspend Transaction.() -> Unit): Unit = runBlocking {
+    protected fun rollbackTransaction(test: suspend Transaction.() -> Unit): Unit = runBlocking {
         newSuspendedTransaction(Dispatchers.Default, db = db) {
+            try {
+                test()
+            } catch (e: Throwable) {
+                throw e
+            } finally {
+                rollback()
+            }
+        }
+    }
+
+    protected fun rollbackKeycloakTransaction(test: suspend Transaction.() -> Unit): Unit = runBlocking {
+        newSuspendedTransaction(Dispatchers.Default, db = keycloakDb) {
             try {
                 test()
             } catch (e: Throwable) {

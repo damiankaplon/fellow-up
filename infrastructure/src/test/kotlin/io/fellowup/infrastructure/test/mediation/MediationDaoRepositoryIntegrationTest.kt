@@ -15,9 +15,8 @@ internal class MediationDaoRepositoryIntegrationTest : DatabaseIntegrationTest()
 
     private val testee: MediationDaoRepository = MediationDaoRepository()
 
-
     @Test
-    fun `should persist all required data`() = test {
+    fun `should persist all required data`() = rollbackTransaction {
         // given
         val participant1 = ParticipantId(UUID.randomUUID())
         val participant2 = ParticipantId(UUID.randomUUID())

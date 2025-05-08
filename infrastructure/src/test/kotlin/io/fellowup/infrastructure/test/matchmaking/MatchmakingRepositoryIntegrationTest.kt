@@ -18,7 +18,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     private val userId2 = UUID.randomUUID()
 
     @Test
-    fun `should find matchmaking within 10km and 2 hours`() = test {
+    fun `should find matchmaking within 10km and 2 hours`() = rollbackTransaction {
         // Given
         with(matchmakingRepository) {
             save(
@@ -61,7 +61,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     }
 
     @Test
-    fun `should not find matchmakings out of range`() = test {
+    fun `should not find matchmakings out of range`() = rollbackTransaction {
         // Given
         with(matchmakingRepository) {
             save(
@@ -99,7 +99,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     }
 
     @Test
-    fun `should not find matchmakings out of time`() = test {
+    fun `should not find matchmakings out of time`() = rollbackTransaction {
         // Given
         with(matchmakingRepository) {
             save(
@@ -137,7 +137,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     }
 
     @Test
-    fun `should not find matchmakings with different category`() = test {
+    fun `should not find matchmakings with different category`() = rollbackTransaction {
         // Given
         with(matchmakingRepository) {
             save(
@@ -175,7 +175,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     }
 
     @Test
-    fun `should find all matchmakings by user id`() = test {
+    fun `should find all matchmakings by user id`() = rollbackTransaction {
         // Given
         val matchmaking1 = Matchmaking(
             id = Matchmaking.Id(UUID.randomUUID()),
@@ -218,7 +218,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     }
 
     @Test
-    fun `should find matchmaking by id`() = test {
+    fun `should find matchmaking by id`() = rollbackTransaction {
         // Given
         val matchmakingId = UUID.randomUUID()
         val matchmaking = Matchmaking(
@@ -252,7 +252,7 @@ internal class MatchmakingRepositoryIntegrationTest : DatabaseIntegrationTest() 
     }
 
     @Test
-    fun `should return null when matchmaking not found by id`() = test {
+    fun `should return null when matchmaking not found by id`() = rollbackTransaction {
         // Given
         val nonExistentId = UUID.randomUUID()
 

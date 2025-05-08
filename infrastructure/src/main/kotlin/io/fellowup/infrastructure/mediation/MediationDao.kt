@@ -2,8 +2,6 @@ package io.fellowup.infrastructure.mediation
 
 
 import io.fellowup.domain.mediation.Mediation
-import io.fellowup.domain.mediation.ParticipantId
-import io.fellowup.infrastructure.db.reflection.getPrivateProperty
 import io.fellowup.infrastructure.db.reflection.setPrivateProperty
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -36,13 +34,7 @@ internal class MediationDao(id: EntityID<UUID>) : UUIDEntity(id) {
 
     object MediationsTable : UUIDTable("mediation") {
         val category = text("category")
-        val isFinished = bool("is_finished").default(false)
+        val isFinished = bool("is_finished")
         val participants = jsonb("participants", JSONB_PARTICIPANTS_SERIALIZER, JSONB_PARTICIPANTS_DESERIALIZER)
     }
-}
-
-internal fun MediationDao.from(mediation: Mediation) {
-    this.category = mediation.category
-    this.isFinished = mediation.isFinished
-    this.participants = mediation.getPrivateProperty<Mediation, Set<ParticipantId>>(MediationDao::participants.name)
 }

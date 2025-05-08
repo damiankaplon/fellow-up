@@ -14,7 +14,7 @@ internal class ActivityRepositoryIntegrationTest : DatabaseIntegrationTest() {
     private val activityRepository = ActivityDaoRepository()
 
     @Test
-    fun `should find activity within 10km and 2 hours`() = test {
+    fun `should find activity within 10km and 2 hours`() = rollbackTransaction {
         // Given
         with(activityRepository) {
             save(
@@ -51,7 +51,7 @@ internal class ActivityRepositoryIntegrationTest : DatabaseIntegrationTest() {
     }
 
     @Test
-    fun `should not find activities out of range`() = test {
+    fun `should not find activities out of range`() = rollbackTransaction {
         // Given
         with(activityRepository) {
             save(
@@ -84,7 +84,7 @@ internal class ActivityRepositoryIntegrationTest : DatabaseIntegrationTest() {
     }
 
     @Test
-    fun `should not find activities out of time`() = test {
+    fun `should not find activities out of time`() = rollbackTransaction {
         // Given
         with(activityRepository) {
             save(
