@@ -9,7 +9,10 @@ import io.fellowup.domain.test.fixtures.mediation.MediationInMemoryRepository
 import io.fellowup.infrastructure.installAppRouting
 import io.fellowup.infrastructure.installSerialization
 import io.fellowup.infrastructure.matchmaking.infra.createMatchmakingModule
+import io.fellowup.infrastructure.mediation.readmodel.keycloak.KeycloakDatabaseTransactionalRunner
 import io.fellowup.infrastructure.test.MockJwtAuthenticationProvider
+import io.fellowup.infrastructure.test.mediation.readmodel.FellowsInMemory
+import io.fellowup.infrastructure.test.mediation.readmodel.MediationsInMemory
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -35,15 +38,20 @@ internal fun ApplicationTestBuilder.matchmakingsTestApp(): MatchmakingsTestApp {
     val matchmakingRepository = MatchmakingInMemoryRepository()
     val activityRepository = ActivityInMemoryRepository()
     val mediationRepository = MediationInMemoryRepository()
+    val mediations = MediationsInMemory()
+    val fellows = FellowsInMemory()
     var jwtPrincipal: JWTPrincipal? = null
     application {
         installSerialization()
         val matchmakingModule = createMatchmakingModule(
             MockTransactionalRunner(),
+            KeycloakDatabaseTransactionalRunner(MockTransactionalRunner()),
             NopEventPublisher(),
             matchmakingRepository,
             activityRepository,
-            mediationRepository
+            mediationRepository,
+            mediations,
+            fellows
         )
         val mockJwtConfig = MockJwtAuthenticationProvider.Config(jwtPrincipal)
         val jwtProvider = MockJwtAuthenticationProvider(mockJwtConfig)

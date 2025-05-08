@@ -19,7 +19,7 @@ internal class OutboxPublisherIntegrationTest : DatabaseIntegrationTest() {
     )
 
     @Test
-    fun `should save event to outbox`() = test {
+    fun `should save event to outbox`() = rollbackTransaction {
         // given
         val event = TestEvent("integration-test-event")
 
@@ -35,7 +35,8 @@ internal class OutboxPublisherIntegrationTest : DatabaseIntegrationTest() {
     }
 
     @Test
-    fun `should be able to serialize to string outbox entry message given jackson object mapper`() = test {
+    fun `should be able to serialize to string outbox entry message given jackson object mapper`() =
+        rollbackTransaction {
         // given
         val objectMapper = jacksonObjectMapper()
         val event = TestEvent("integration-test-event")

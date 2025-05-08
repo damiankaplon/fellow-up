@@ -16,7 +16,7 @@ internal class ExposedTransactionalRunnerIntegrationTest : DatabaseIntegrationTe
     private val testee = ExposedTransactionalRunner(super.db)
 
     @Test
-    fun `should rollback outer outer transaction when inner is rolled back`() = test {
+    fun `should rollback outer outer transaction when inner is rolled back`() = rollbackTransaction {
         // given
         SchemaUtils.create(ExposedTransactionalRunnerTestDao.ExposedTransactionalRunnerTestTable)
 
@@ -40,7 +40,7 @@ internal class ExposedTransactionalRunnerIntegrationTest : DatabaseIntegrationTe
     }
 
     @Test
-    fun `should rollback inner transaction when outer is rolled back`() = test {
+    fun `should rollback inner transaction when outer is rolled back`() = rollbackTransaction {
         // given
         SchemaUtils.create(ExposedTransactionalRunnerTestDao.ExposedTransactionalRunnerTestTable)
 
