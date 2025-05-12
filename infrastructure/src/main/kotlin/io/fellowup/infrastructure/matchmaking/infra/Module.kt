@@ -9,18 +9,15 @@ import io.fellowup.domain.mediation.readmodel.Mediations
 import io.fellowup.infrastructure.mediation.MediationDaoRepository
 import io.fellowup.infrastructure.mediation.readmodel.MediationsController
 import io.fellowup.infrastructure.mediation.readmodel.MediationsExposed
-import io.fellowup.infrastructure.mediation.readmodel.keycloak.KeycloakDatabaseFellows
-import io.fellowup.infrastructure.mediation.readmodel.keycloak.KeycloakDatabaseTransactionalRunner
 
 fun createMatchmakingModule(
     transactionalRunner: TransactionalRunner,
-    keycloakDatabaseTransactionalRunner: KeycloakDatabaseTransactionalRunner,
     matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>,
+    fellows: Fellows,
     matchmakingRepository: MatchmakingRepository = MatchmakingDaoRepository(),
     activityRepository: ActivityRepository = ActivityDaoRepository(),
     mediationRepository: MediationRepository = MediationDaoRepository(),
     mediations: Mediations = MediationsExposed(),
-    fellows: Fellows = KeycloakDatabaseFellows(keycloakDatabaseTransactionalRunner)
 ): MatchmakingsModule {
     val matchmakingService = MatchmakingService(
         matchmakingRepository,

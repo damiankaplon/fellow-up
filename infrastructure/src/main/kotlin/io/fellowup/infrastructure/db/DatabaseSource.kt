@@ -4,12 +4,12 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.fellowup.domain.db.DataSourceProvider
 import io.fellowup.domain.db.DatabaseConfigProvider
-import io.ktor.server.application.*
+import io.ktor.server.config.*
 import javax.sql.DataSource
 
 class HikariCPDataSourceProvider(
     private val databaseConfigProvider: DatabaseConfigProvider,
-    private val env: ApplicationEnvironment
+    private val ktorAppConfig: ApplicationConfig
 ) : DataSourceProvider {
     override fun provide(): DataSource {
         val dbConfig = databaseConfigProvider.provide()
@@ -18,7 +18,7 @@ class HikariCPDataSourceProvider(
             username = dbConfig.user
             password = dbConfig.password
             schema = dbConfig.schema
-            maximumPoolSize = env.config.propertyOrNull("db.poolSize")?.getString()?.toInt() ?: 10
+            maximumPoolSize = ktorAppConfig.propertyOrNull("db.poolSize")?.getString()?.toInt() ?: 10
         }
         return HikariDataSource(hikariConfig)
     }

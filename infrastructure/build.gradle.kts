@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     kotlin("plugin.serialization")
+    kotlin("kapt") version "2.1.20"
     id("io.ktor.plugin") version "3.0.1"
     id("org.flywaydb.flyway") version "11.1.1"
 }
@@ -57,6 +58,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3")
     implementation("org.apache.kafka:kafka-clients:3.9.0")
+    implementation("com.google.dagger:dagger:2.56.2")
+    kapt("com.google.dagger:dagger-compiler:2.56.2")
 
 
     testImplementation(testFixtures(project(":domain")))
