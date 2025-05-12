@@ -14,7 +14,7 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.Serializable
 
-class MatchmakingsController(
+class MatchmakingController(
     private val transactionalRunner: TransactionalRunner,
     private val matchmakingRepository: MatchmakingRepository,
     private val matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>

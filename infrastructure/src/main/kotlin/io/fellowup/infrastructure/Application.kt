@@ -1,13 +1,10 @@
 package io.fellowup.infrastructure
 
 import io.fellowup.domain.events.Topic
-import io.fellowup.domain.matchmaking.MatchmakingEvent
-import io.fellowup.infrastructure.events.outbox.infra.OutboxPublisher
 import io.fellowup.infrastructure.kafka.infra.KafkaOutboxService
 import io.fellowup.infrastructure.kafka.infra.installOutbox
 import io.fellowup.infrastructure.kafka.infra.ktor.KafkaProducer
 import io.fellowup.infrastructure.kafka.infra.ktor.consume
-import io.fellowup.infrastructure.matchmaking.infra.createMatchmakingModule
 import io.fellowup.infrastructure.security.NoAuthenticatedSubjectExceptionHandler
 import io.fellowup.infrastructure.security.NoJwtExceptionHandler
 import io.fellowup.infrastructure.security.installOAuthAuth
@@ -31,24 +28,15 @@ fun Application.module() {
         .build()
 
     val transactionalRunner = appComponent.transactionalRunner()
-    val matchmakingEventsPublisher = OutboxPublisher<MatchmakingEvent>(
-        defaultTopic = Topic("io.fellowup.matchmaking.domain.matchmakingCreated"),
-        transactionalRunner = transactionalRunner,
-    )
-    val matchmakingModule = createMatchmakingModule(
-        transactionalRunner,
-        matchmakingEventsPublisher,
-        appComponent.fellows()
-    )
     consume(
         transactionalRunner,
-        matchmakingModule.matchmakingCreatedEventConsumer,
+        appComponent.matchmakingCreatedEventConsumer(),
         Topic("io.fellowup.matchmaking.domain.matchmakingCreated")
     )
     val kafkaProducer = environment.config.KafkaProducer()
     monitor.installOutbox(KafkaOutboxService(transactionalRunner, kafkaProducer))
     routing {
         val oAuthModule = installOAuthAuth()
-        installAppRouting(oAuthModule.securedRouting, matchmakingModule.matchmakingsController)
+        installAppRouting(oAuthModule.securedRouting, appComponent.matchmakingController())
     }
 }
