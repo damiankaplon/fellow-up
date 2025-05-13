@@ -19,8 +19,8 @@ internal class MatchmakingCrudKtorIntegrationTest {
     @Test
     fun `should create matchmaking`() = testApplication {
         // Given
-        val testApp = matchmakingsTestApp()
-        testApp.userUuid(UUID.randomUUID())
+        val testApp = setupMatchmakingTestApp()
+        testApp.component.mockJwtAuthenticationProvider().setTestJwtPrincipalSubject(UUID.randomUUID().toString())
 
         // When
         val response = clientJson.post("/api/matchmakings") {
@@ -48,8 +48,8 @@ internal class MatchmakingCrudKtorIntegrationTest {
     @Test
     fun `should find all user matchmakings`() = testApplication {
         // Given
-        val matchmakingsTestApp = matchmakingsTestApp()
-        val matchmakingRepository = matchmakingsTestApp.matchmakingRepository
+        val testApp = setupMatchmakingTestApp()
+        val matchmakingRepository = testApp.component.matchmakingRepository()
 
         matchmakingRepository.save(
             Matchmaking(
@@ -59,8 +59,9 @@ internal class MatchmakingCrudKtorIntegrationTest {
                 location = Location(0.0, 0.0)
             )
         )
+
         val loggedInUserUuid = UUID.randomUUID()
-        matchmakingsTestApp.userUuid(loggedInUserUuid)
+        testApp.component.mockJwtAuthenticationProvider().setTestJwtPrincipalSubject(loggedInUserUuid.toString())
         matchmakingRepository.save(
             Matchmaking(
                 category = "SOCCER",

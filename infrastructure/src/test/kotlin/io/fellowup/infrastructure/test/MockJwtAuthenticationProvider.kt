@@ -1,28 +1,32 @@
 package io.fellowup.infrastructure.test
 
 import io.fellowup.infrastructure.security.SecuredRouting
-import io.ktor.server.auth.AuthenticationContext
-import io.ktor.server.auth.AuthenticationProvider
-import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.Routing
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.routing.*
+import io.mockk.every
+import io.mockk.mockk
+import java.util.*
 
 const val MOCK_JWT_AUTH_PROVIDER_NAME = "mock-jwt-auth-provider"
 
-internal class MockJwtAuthenticationProvider(
-    val config: Config
-) : AuthenticationProvider(config), SecuredRouting {
+internal class MockJwtAuthenticationProvider : AuthenticationProvider(Config()), SecuredRouting {
+
+    var testPrincipal: JWTPrincipal? =
+        mockk<JWTPrincipal>().apply { every { subject } returns UUID.randomUUID().toString() }
+
+    fun setTestJwtPrincipalSubject(sub: String?) {
+        testPrincipal = mockk<JWTPrincipal>().apply { every { subject } returns sub }
+    }
+
     override suspend fun onAuthenticate(context: AuthenticationContext) {
-        config.principal?.let { context.principal(it) }
+        testPrincipal?.let { context.principal(it) }
     }
 
     override fun invoke(routing: Routing, routes: Route.() -> Unit) {
         routing.authenticate(MOCK_JWT_AUTH_PROVIDER_NAME) { routes() }
     }
 
-    data class Config(
-        var principal: JWTPrincipal? = null
-    ) : AuthenticationProvider.Config(MOCK_JWT_AUTH_PROVIDER_NAME)
+    private class Config() : AuthenticationProvider.Config(MOCK_JWT_AUTH_PROVIDER_NAME)
 }
 
