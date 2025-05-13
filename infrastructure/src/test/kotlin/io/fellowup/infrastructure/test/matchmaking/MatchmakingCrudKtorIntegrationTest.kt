@@ -2,9 +2,9 @@ package io.fellowup.infrastructure.test.matchmaking
 
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.matchmaking.Matchmaking
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingsController
-import io.fellowup.infrastructure.test.clientJson
 import io.fellowup.domain.test.fixtures.utcInstant
+import io.fellowup.infrastructure.matchmaking.infra.MatchmakingController
+import io.fellowup.infrastructure.test.clientJson
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -19,17 +19,17 @@ internal class MatchmakingCrudKtorIntegrationTest {
     @Test
     fun `should create matchmaking`() = testApplication {
         // Given
-        val testApp = matchmakingsTestApp()
-        testApp.userUuid(UUID.randomUUID())
+        val testApp = setupMatchmakingTestApp()
+        testApp.component.mockJwtAuthenticationProvider().setTestJwtPrincipalSubject(UUID.randomUUID().toString())
 
         // When
         val response = clientJson.post("/api/matchmakings") {
             contentType(ContentType.Application.Json)
             setBody(
-                MatchmakingsController.CreateMatchmakingBody(
+                MatchmakingController.CreateMatchmakingBody(
                     category = "soccer",
                     at = Instant.parse("2021-01-01T00:00:00Z"),
-                    location = MatchmakingsController.LocationDto(
+                    location = MatchmakingController.LocationDto(
                         lat = 0.0,
                         lng = 0.0
                     )
@@ -39,7 +39,7 @@ internal class MatchmakingCrudKtorIntegrationTest {
         }
         // Then
         assertThat(response.status.value).isEqualTo(200)
-        val body = response.body<MatchmakingsController.MatchmakingDto>()
+        val body = response.body<MatchmakingController.MatchmakingDto>()
         assertThat(body.id).isNotNull()
         assertThat(body.category).isEqualTo("soccer")
         assertThat(body.at).isEqualTo(Instant.parse("2021-01-01T00:00:00Z"))
@@ -48,8 +48,8 @@ internal class MatchmakingCrudKtorIntegrationTest {
     @Test
     fun `should find all user matchmakings`() = testApplication {
         // Given
-        val matchmakingsTestApp = matchmakingsTestApp()
-        val matchmakingRepository = matchmakingsTestApp.matchmakingRepository
+        val testApp = setupMatchmakingTestApp()
+        val matchmakingRepository = testApp.component.matchmakingRepository()
 
         matchmakingRepository.save(
             Matchmaking(
@@ -59,8 +59,9 @@ internal class MatchmakingCrudKtorIntegrationTest {
                 location = Location(0.0, 0.0)
             )
         )
+
         val loggedInUserUuid = UUID.randomUUID()
-        matchmakingsTestApp.userUuid(loggedInUserUuid)
+        testApp.component.mockJwtAuthenticationProvider().setTestJwtPrincipalSubject(loggedInUserUuid.toString())
         matchmakingRepository.save(
             Matchmaking(
                 category = "SOCCER",
@@ -75,7 +76,7 @@ internal class MatchmakingCrudKtorIntegrationTest {
 
         // Then
         assertThat(response.status.value).isEqualTo(200)
-        val body = response.body<Set<MatchmakingsController.MatchmakingDto>>()
+        val body = response.body<Set<MatchmakingController.MatchmakingDto>>()
         assertThat(body).singleElement().satisfies(
             { matchmaking ->
                 assertThat(matchmaking.id).isNotNull()
