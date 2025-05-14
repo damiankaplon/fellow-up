@@ -1,13 +1,12 @@
 package io.fellowup.infrastructure.kafka.infra
 
-import io.ktor.events.*
 import io.ktor.server.application.*
 import io.ktor.util.logging.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.milliseconds
 
-fun Events.installOutbox(kafkaOutboxService: KafkaOutboxService) {
+fun io.ktor.events.Events.installOutbox(kafkaOutboxService: KafkaOutboxService) {
     val logger = KtorSimpleLogger("outbox-service-publisher")
     val exceptionHandler = CoroutineExceptionHandler { _: CoroutineContext, throwable: Throwable ->
         logger.error("Coroutine error", throwable)
