@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.events.outbox.infra
+package io.fellowup.infrastructure.events.outbox
 
 import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.events.EventPublisher

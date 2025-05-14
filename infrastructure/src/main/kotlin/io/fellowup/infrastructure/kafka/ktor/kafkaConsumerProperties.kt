@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.kafka.infra.ktor
+package io.fellowup.infrastructure.kafka.ktor
 
 import io.ktor.server.config.*
 import org.apache.kafka.clients.consumer.ConsumerConfig

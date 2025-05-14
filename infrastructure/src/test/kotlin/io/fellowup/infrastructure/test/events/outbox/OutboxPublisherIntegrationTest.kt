@@ -3,8 +3,8 @@ package io.fellowup.infrastructure.test.events.outbox
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.fellowup.domain.events.Topic
 import io.fellowup.infrastructure.db.ExposedTransactionalRunner
-import io.fellowup.infrastructure.events.outbox.infra.OutboxDao
-import io.fellowup.infrastructure.events.outbox.infra.OutboxPublisher
+import io.fellowup.infrastructure.events.outbox.OutboxDao
+import io.fellowup.infrastructure.events.outbox.OutboxPublisher
 import io.fellowup.infrastructure.test.DatabaseIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test

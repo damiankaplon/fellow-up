@@ -3,7 +3,7 @@ package io.fellowup.infrastructure.test.matchmaking
 import io.fellowup.domain.matchmaking.Activity
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.test.fixtures.utcInstant
-import io.fellowup.infrastructure.matchmaking.infra.ActivityDaoRepository
+import io.fellowup.infrastructure.matchmaking.ActivityDaoRepository
 import io.fellowup.infrastructure.test.DatabaseIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.exposed.dao.flushCache

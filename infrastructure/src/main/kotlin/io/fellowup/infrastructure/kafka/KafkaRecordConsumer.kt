@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.kafka.infra
+package io.fellowup.infrastructure.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 

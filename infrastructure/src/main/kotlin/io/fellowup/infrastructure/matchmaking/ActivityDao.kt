@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.matchmaking.infra
+package io.fellowup.infrastructure.matchmaking
 
 import io.fellowup.domain.matchmaking.Activity
 import io.fellowup.domain.matchmaking.Location
@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 internal class ActivityDao(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ActivityDao>(ActivitiesTable)

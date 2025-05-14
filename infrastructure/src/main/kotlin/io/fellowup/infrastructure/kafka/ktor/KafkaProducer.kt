@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.kafka.infra.ktor
+package io.fellowup.infrastructure.kafka.ktor
 
 import io.fellowup.infrastructure.kafka.serialization.infra.JacksonKObjectSerializer
 import io.ktor.server.config.*

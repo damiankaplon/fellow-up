@@ -3,7 +3,7 @@ package io.fellowup.infrastructure.test.matchmaking
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.domain.test.fixtures.utcInstant
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingController
+import io.fellowup.infrastructure.matchmaking.MatchmakingController
 import io.fellowup.infrastructure.test.clientJson
 import io.ktor.client.call.*
 import io.ktor.client.request.*

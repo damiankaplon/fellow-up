@@ -1,10 +1,9 @@
-package io.fellowup.infrastructure.matchmaking.infra
+package io.fellowup.infrastructure.matchmaking
 
 import MetersBetween
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.domain.matchmaking.MatchmakingRepository
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingDao.MatchmakingsTable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.doubleParam
 import java.time.Instant
@@ -20,7 +19,7 @@ class MatchmakingDaoRepository : MatchmakingRepository {
     }
 
     override suspend fun findAllByUserId(usedId: UUID): Set<Matchmaking> {
-        return MatchmakingDao.find { MatchmakingsTable.user_id eq usedId }
+        return MatchmakingDao.find { MatchmakingDao.MatchmakingsTable.user_id eq usedId }
             .map { it.toMatchmaking() }.toSet()
     }
 
@@ -35,12 +34,12 @@ class MatchmakingDaoRepository : MatchmakingRepository {
         time: Instant,
         maxSecondsDiff: Int
     ): Set<Matchmaking> = MatchmakingDao.find {
-        MatchmakingsTable.category eq category and MatchmakingsTable.at.between(
+        MatchmakingDao.MatchmakingsTable.category eq category and MatchmakingDao.MatchmakingsTable.at.between(
             time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS),
             time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
         ) and MetersBetween(
-            MatchmakingsTable.longitude,
-            MatchmakingsTable.latitude,
+            MatchmakingDao.MatchmakingsTable.longitude,
+            MatchmakingDao.MatchmakingsTable.latitude,
             doubleParam(location.longitude),
             doubleParam(location.latitude)
         ).lessEq(maxMetersDiff.toFloat())
