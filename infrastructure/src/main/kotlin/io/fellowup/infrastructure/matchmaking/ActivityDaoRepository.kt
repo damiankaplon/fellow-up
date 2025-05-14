@@ -1,10 +1,9 @@
-package io.fellowup.infrastructure.matchmaking.infra
+package io.fellowup.infrastructure.matchmaking
 
 import MetersBetween
 import io.fellowup.domain.matchmaking.Activity
 import io.fellowup.domain.matchmaking.ActivityRepository
 import io.fellowup.domain.matchmaking.Location
-import io.fellowup.infrastructure.matchmaking.infra.ActivityDao.ActivitiesTable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.doubleParam
 import java.time.Instant
@@ -24,12 +23,12 @@ class ActivityDaoRepository : ActivityRepository {
         time: Instant,
         maxSecondsDiff: Int
     ): Set<Activity> = ActivityDao.find {
-        ActivitiesTable.at.between(
+        ActivityDao.ActivitiesTable.at.between(
             time.minus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS),
             time.plus(maxSecondsDiff.toLong(), ChronoUnit.SECONDS)
         ) and MetersBetween(
-            ActivitiesTable.longitude,
-            ActivitiesTable.latitude,
+            ActivityDao.ActivitiesTable.longitude,
+            ActivityDao.ActivitiesTable.latitude,
             doubleParam(location.longitude),
             doubleParam(location.latitude)
         ).lessEq(maxMetersDiff.toFloat())

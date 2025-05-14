@@ -1,8 +1,8 @@
 package io.fellowup.infrastructure
 
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingController
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingController.CreateMatchmakingBody
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingController.MatchmakingDto
+import io.fellowup.infrastructure.matchmaking.MatchmakingController
+import io.fellowup.infrastructure.matchmaking.MatchmakingController.CreateMatchmakingBody
+import io.fellowup.infrastructure.matchmaking.MatchmakingController.MatchmakingDto
 import io.fellowup.infrastructure.security.SecuredRouting
 import io.fellowup.infrastructure.security.jwtPrincipalOrThrow
 import io.ktor.server.request.*

@@ -15,7 +15,7 @@ import io.fellowup.domain.test.fixtures.matchmaking.MatchmakingInMemoryRepositor
 import io.fellowup.domain.test.fixtures.mediation.MediationInMemoryRepository
 import io.fellowup.infrastructure.installAppRouting
 import io.fellowup.infrastructure.installSerialization
-import io.fellowup.infrastructure.matchmaking.infra.MatchmakingController
+import io.fellowup.infrastructure.matchmaking.MatchmakingController
 import io.fellowup.infrastructure.test.MockJwtAuthenticationProvider
 import io.fellowup.infrastructure.test.mediation.readmodel.FellowsInMemory
 import io.fellowup.infrastructure.test.mediation.readmodel.MediationsInMemory

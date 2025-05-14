@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.matchmaking.infra
+package io.fellowup.infrastructure.matchmaking
 
 import dagger.Module
 import dagger.Provides

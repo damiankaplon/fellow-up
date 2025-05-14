@@ -1,4 +1,4 @@
-package io.fellowup.infrastructure.matchmaking.infra
+package io.fellowup.infrastructure.matchmaking
 
 import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.events.EventPublisher
