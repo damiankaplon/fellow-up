@@ -3,7 +3,6 @@ package io.fellowup.infrastructure.kafka
 import dagger.Module
 import dagger.Provides
 import io.fellowup.domain.db.TransactionalRunner
-import io.fellowup.infrastructure.kafka.infra.KafkaOutboxService
 import io.fellowup.infrastructure.kafka.serialization.infra.JacksonKObjectSerializer
 import io.ktor.server.config.*
 import jakarta.inject.Singleton

@@ -8,7 +8,7 @@ import io.fellowup.domain.events.Topic
 import io.fellowup.domain.matchmaking.*
 import io.fellowup.domain.mediation.MediationRepository
 import io.fellowup.domain.mediation.readmodel.Mediations
-import io.fellowup.infrastructure.events.outbox.infra.OutboxPublisher
+import io.fellowup.infrastructure.events.outbox.OutboxPublisher
 import io.fellowup.infrastructure.mediation.MediationDaoRepository
 import io.fellowup.infrastructure.mediation.readmodel.MediationsExposed
 import jakarta.inject.Singleton

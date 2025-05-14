@@ -1,8 +1,8 @@
 package io.fellowup.infrastructure.test.kafka
 
 import io.fellowup.domain.test.fixtures.db.MockTransactionalRunner
-import io.fellowup.infrastructure.kafka.infra.KafkaConsumerThread
-import io.fellowup.infrastructure.kafka.infra.KafkaRecordConsumer
+import io.fellowup.infrastructure.kafka.KafkaConsumerThread
+import io.fellowup.infrastructure.kafka.KafkaRecordConsumer
 import org.apache.kafka.clients.admin.Admin
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.consumer.ConsumerRecord

@@ -1,8 +1,8 @@
 package io.fellowup.infrastructure
 
 import io.fellowup.domain.events.Topic
-import io.fellowup.infrastructure.kafka.infra.installOutbox
-import io.fellowup.infrastructure.kafka.infra.ktor.consume
+import io.fellowup.infrastructure.kafka.installOutbox
+import io.fellowup.infrastructure.kafka.ktor.consume
 import io.fellowup.infrastructure.security.NoAuthenticatedSubjectExceptionHandler
 import io.fellowup.infrastructure.security.NoJwtExceptionHandler
 import io.fellowup.infrastructure.security.installOAuthAuth

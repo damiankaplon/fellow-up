@@ -1,8 +1,9 @@
-package io.fellowup.infrastructure.kafka.infra
+package io.fellowup.infrastructure.kafka
 
 import io.fellowup.domain.db.TransactionalRunner
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -14,7 +15,7 @@ fun KafkaConsumerThread(
     kafkaRecordConsumer: KafkaRecordConsumer,
     transactionalRunner: TransactionalRunner,
     threadName: String = "kafka-consumer-${kafkaRecordConsumer.topic}-${UUID.randomUUID()}",
-    logger: org.slf4j.Logger = LoggerFactory.getLogger(threadName)
+    logger: Logger = LoggerFactory.getLogger(threadName)
 ): KafkaConsumerThread =
     KafkaConsumerThread(threadName, kafkaConsumerProperties, kafkaRecordConsumer.topic) { kafkaConsumer ->
         runBlocking {

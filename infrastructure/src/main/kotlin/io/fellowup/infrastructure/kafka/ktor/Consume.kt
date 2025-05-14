@@ -1,11 +1,11 @@
-package io.fellowup.infrastructure.kafka.infra.ktor
+package io.fellowup.infrastructure.kafka.ktor
 
 import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.events.EventConsumer
 import io.fellowup.domain.events.Topic
 import io.fellowup.infrastructure.databind.JACKSON_OBJECT_MAPPER
-import io.fellowup.infrastructure.kafka.infra.KafkaConsumerThread
-import io.fellowup.infrastructure.kafka.infra.KafkaRecordConsumer
+import io.fellowup.infrastructure.kafka.KafkaConsumerThread
+import io.fellowup.infrastructure.kafka.KafkaRecordConsumer
 import io.ktor.server.application.*
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
