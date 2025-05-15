@@ -16,6 +16,7 @@ import io.fellowup.domain.test.fixtures.mediation.MediationInMemoryRepository
 import io.fellowup.infrastructure.installAppRouting
 import io.fellowup.infrastructure.installSerialization
 import io.fellowup.infrastructure.matchmaking.MatchmakingController
+import io.fellowup.infrastructure.mediation.readmodel.MediationsController
 import io.fellowup.infrastructure.test.MockJwtAuthenticationProvider
 import io.fellowup.infrastructure.test.mediation.readmodel.FellowsInMemory
 import io.fellowup.infrastructure.test.mediation.readmodel.MediationsInMemory
@@ -92,6 +93,12 @@ internal class MatchmakingTestModule {
     @Provides
     @Singleton
     fun provideFellows(): FellowsInMemory = FellowsInMemory()
+
+    @Provides
+    @Singleton
+    fun provideMediationsController(mediations: MediationsInMemory, fellows: FellowsInMemory): MediationsController {
+        return MediationsController(mediations, fellows)
+    }
 }
 
 @Singleton
@@ -109,6 +116,7 @@ internal interface MatchmakingTestAppComponent {
     fun fellows(): FellowsInMemory
     fun matchmakingService(): MatchmakingService
     fun matchmakingController(): MatchmakingController
+    fun mediationsController(): MediationsController
 }
 
 internal class MatchmakingTestApp(
@@ -125,7 +133,8 @@ internal fun ApplicationTestBuilder.setupMatchmakingTestApp(): MatchmakingTestAp
         routing {
             installAppRouting(
                 matchmakingTestAppComponent.mockJwtAuthenticationProvider(),
-                matchmakingTestAppComponent.matchmakingController()
+                matchmakingTestAppComponent.matchmakingController(),
+                matchmakingTestAppComponent.mediationsController()
             )
         }
     }

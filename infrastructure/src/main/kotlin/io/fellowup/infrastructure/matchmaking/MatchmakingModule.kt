@@ -7,10 +7,7 @@ import io.fellowup.domain.events.EventPublisher
 import io.fellowup.domain.events.Topic
 import io.fellowup.domain.matchmaking.*
 import io.fellowup.domain.mediation.MediationRepository
-import io.fellowup.domain.mediation.readmodel.Mediations
 import io.fellowup.infrastructure.events.outbox.OutboxPublisher
-import io.fellowup.infrastructure.mediation.MediationDaoRepository
-import io.fellowup.infrastructure.mediation.readmodel.MediationsExposed
 import jakarta.inject.Singleton
 
 @Module
@@ -49,25 +46,6 @@ class MatchmakingModule {
     @Singleton
     fun provideMatchmakingRepository(): MatchmakingRepository {
         return MatchmakingDaoRepository()
-    }
-
-    @Provides
-    @Singleton
-    fun provideActivityRepository(): ActivityRepository {
-        return ActivityDaoRepository()
-    }
-
-    @Provides
-    @Singleton
-    fun provideMediationRepository(): MediationRepository {
-        return MediationDaoRepository()
-    }
-
-
-    @Provides
-    @Singleton
-    fun provideMediations(): Mediations {
-        return MediationsExposed()
     }
 
     @Provides

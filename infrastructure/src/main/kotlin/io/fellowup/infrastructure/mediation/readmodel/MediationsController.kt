@@ -2,6 +2,7 @@ package io.fellowup.infrastructure.mediation.readmodel
 
 import io.fellowup.domain.mediation.ParticipantId
 import io.fellowup.domain.mediation.readmodel.*
+import io.fellowup.infrastructure.security.Principal
 import kotlinx.serialization.Serializable
 import java.util.*
 
@@ -10,8 +11,8 @@ class MediationsController(
     private val fellows: Fellows,
 ) {
 
-    suspend fun findNotFinishedByFellowId(fellowId: UUID): Set<MediationDto> {
-        val mediations: Set<Mediation> = mediations.findNotFinishedByParticipant(ParticipantId(fellowId))
+    suspend fun findNotFinishedByFellowId(principal: Principal): Set<MediationDto> {
+        val mediations: Set<Mediation> = mediations.findNotFinishedByParticipant(ParticipantId(principal.userId))
         val participants: Set<ParticipantId> = mediations.flatMap(Mediation::participantIds).toSet()
         val fellows: Set<Fellow> = fellows.findByParticipantIds(participants)
         return mediations.map { toDto(it, fellows) }.toSet()
@@ -38,7 +39,7 @@ class MediationsController(
     private fun toDto(proposal: Proposal): ProposalDto {
         return ProposalDto(
             acceptedBy = proposal.acceptedBy,
-            locationDto = LocationDto(
+            location = LocationDto(
                 lat = proposal.location.latitude,
                 lng = proposal.location.longitude
             )
@@ -61,7 +62,7 @@ class MediationsController(
     @Serializable
     data class ProposalDto(
         val acceptedBy: Int,
-        val locationDto: LocationDto
+        val location: LocationDto
     )
 
     @Serializable

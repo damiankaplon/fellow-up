@@ -9,6 +9,8 @@ import io.fellowup.infrastructure.kafka.KafkaModule
 import io.fellowup.infrastructure.kafka.KafkaOutboxService
 import io.fellowup.infrastructure.matchmaking.MatchmakingController
 import io.fellowup.infrastructure.matchmaking.MatchmakingModule
+import io.fellowup.infrastructure.mediation.MediationModule
+import io.fellowup.infrastructure.mediation.readmodel.MediationsController
 import io.fellowup.infrastructure.mediation.readmodel.keycloak.KeycloakDatabaseFellowsModule
 import io.ktor.server.config.*
 import jakarta.inject.Singleton
@@ -19,16 +21,18 @@ import org.jetbrains.exposed.sql.Database
     modules = [
         DatabaseModule::class,
         KafkaModule::class,
-        KeycloakDatabaseFellowsModule::class,
         MatchmakingModule::class,
+        KeycloakDatabaseFellowsModule::class,
+        MediationModule::class
     ]
 )
 interface FellowUpAppComponent {
     fun database(): Database
     fun transactionalRunner(): TransactionalRunner
+    fun kafkaOutboxService(): KafkaOutboxService
     fun matchmakingCreatedEventConsumer(): MatchmakingCreatedEventConsumer
     fun matchmakingController(): MatchmakingController
-    fun kafkaOutboxService(): KafkaOutboxService
+    fun mediationController(): MediationsController
 
     @Component.Builder
     interface Builder {
