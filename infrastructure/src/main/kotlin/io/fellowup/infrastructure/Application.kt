@@ -33,6 +33,10 @@ fun Application.module() {
     monitor.installOutbox(appComponent.kafkaOutboxService())
     routing {
         val oAuthModule = installOAuthAuth()
-        installAppRouting(oAuthModule.securedRouting, appComponent.matchmakingController())
+        installAppRouting(
+            oAuthModule.securedRouting,
+            appComponent.matchmakingController(),
+            appComponent.mediationController()
+        )
     }
 }
