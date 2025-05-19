@@ -9,16 +9,22 @@ import io.fellowup.infrastructure.db.KtorEnvDatabaseConfigProvider
 import io.ktor.server.config.*
 import jakarta.inject.Singleton
 import org.jetbrains.exposed.sql.Database
+import javax.sql.DataSource
 
 @Module
 class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideExposedDatabase(ktorAppConfig: ApplicationConfig): Database {
+    fun provideDataSource(ktorAppConfig: ApplicationConfig): DataSource {
         val databaseConfigProvider = KtorEnvDatabaseConfigProvider(ktorAppConfig)
-        val databaseSourceProvider = HikariCPDataSourceProvider(databaseConfigProvider, ktorAppConfig)
-        val database = Database.connect(databaseSourceProvider.provide())
+        return HikariCPDataSourceProvider(databaseConfigProvider, ktorAppConfig).provide()
+    }
+
+    @Provides
+    @Singleton
+    fun provideExposedDatabase(dataSource: DataSource): Database {
+        val database = Database.connect(dataSource)
         return database
     }
 
