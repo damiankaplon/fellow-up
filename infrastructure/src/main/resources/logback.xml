@@ -14,4 +14,5 @@
     <logger name="org.apache.kafka.clients.consumer.internals" level="INFO"/>
     <logger name="org.apache.kafka.common.telemetry.internals" level="INFO"/>
     <logger name="com.zaxxer.hikari.pool" level="INFO"/>
+    <logger name="KafkaOutboxServiceSqlLogger" level="INFO"/>
 </configuration>

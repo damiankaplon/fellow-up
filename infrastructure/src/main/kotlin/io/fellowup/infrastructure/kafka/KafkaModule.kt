@@ -2,12 +2,21 @@ package io.fellowup.infrastructure.kafka
 
 import dagger.Module
 import dagger.Provides
-import io.fellowup.domain.db.TransactionalRunner
+import io.fellowup.infrastructure.db.ExposedTransactionalRunner
 import io.fellowup.infrastructure.kafka.serialization.infra.JacksonKObjectSerializer
 import io.ktor.server.config.*
 import jakarta.inject.Singleton
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.DatabaseConfig
+import org.jetbrains.exposed.sql.SqlLogger
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.statements.StatementContext
+import org.jetbrains.exposed.sql.statements.expandArgs
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.slf4j.LoggerFactory
+import javax.sql.DataSource
 
 @Module
 class KafkaModule {
@@ -34,7 +43,25 @@ class KafkaModule {
     @Provides
     @Singleton
     fun provideKafkaOutboxService(
-        transactionalRunner: TransactionalRunner,
+        dataSource: DataSource,
         kafkaProducer: KafkaProducer<String, Any>
-    ): KafkaOutboxService = KafkaOutboxService(transactionalRunner, kafkaProducer)
+    ): KafkaOutboxService {
+
+        val transactionalRunner = ExposedTransactionalRunner(
+            Database.connect(
+                datasource = dataSource,
+                databaseConfig = DatabaseConfig { sqlLogger = KafkaOutboxServiceSqlLogger }
+            )
+        )
+        return KafkaOutboxService(transactionalRunner, kafkaProducer)
+    }
+
+    private object KafkaOutboxServiceSqlLogger : SqlLogger {
+        private val logger = LoggerFactory.getLogger(KafkaOutboxServiceSqlLogger::class.simpleName)
+        override fun log(context: StatementContext, transaction: Transaction) {
+            if (logger.isDebugEnabled) {
+                logger.debug(context.expandArgs(TransactionManager.current()))
+            }
+        }
+    }
 }
