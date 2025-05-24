@@ -1,6 +1,7 @@
 package io.fellowup.domain.test.matchmaking
 
 import io.fellowup.domain.matchmaking.*
+import io.fellowup.domain.mediation.MediationEvent
 import io.fellowup.domain.test.fixtures.events.EventStoringPublisher
 import io.fellowup.domain.test.fixtures.matchmaking.ActivityInMemoryRepository
 import io.fellowup.domain.test.fixtures.matchmaking.MatchmakingInMemoryRepository
@@ -16,10 +17,16 @@ internal class MatchmakingTest {
     private val matchmakingRepository = MatchmakingInMemoryRepository()
     private val mediationRepository = MediationInMemoryRepository()
     private val activityRepository = ActivityInMemoryRepository()
-    private val eventPublisher: EventStoringPublisher<MatchmakingEvent> = EventStoringPublisher()
+    private val matchmakingEventsPublisher: EventStoringPublisher<MatchmakingEvent> = EventStoringPublisher()
+    private val mediationEventsPublisher: EventStoringPublisher<MediationEvent> = EventStoringPublisher()
     private val matchmakingService: MatchmakingService =
-        MatchmakingService(matchmakingRepository, mediationRepository, activityRepository, eventPublisher)
-
+        MatchmakingService(
+            matchmakingRepository,
+            mediationRepository,
+            activityRepository,
+            matchmakingEventsPublisher,
+            mediationEventsPublisher
+        )
 
     @Test
     fun `should match with activities within range of distance and time given matchmaking`(): Unit = runBlocking {
@@ -58,7 +65,7 @@ internal class MatchmakingTest {
         matchmakingService.match(matchmakingId = matchmaking.id)
 
         // then
-        assertThat(eventPublisher.events).satisfiesExactlyInAnyOrder(
+        assertThat(matchmakingEventsPublisher.events).satisfiesExactlyInAnyOrder(
             {
                 assertThat(it).isInstanceOf(MatchmakingEvent.ActivityMatched::class.java)
                 assertThat((it as MatchmakingEvent.ActivityMatched).activityId).isEqualTo(matchingActivity1.id)
@@ -76,21 +83,21 @@ internal class MatchmakingTest {
     fun `should start mediation given no matching activities but 3 similar matchmakings of different users ongoing`(): Unit =
         runBlocking {
             // given
-            Matchmaking(
+            val matchmaking1 = Matchmaking(
                 category = "soccer",
                 userId = UUID.randomUUID(),
                 at = parse("2025-04-14T11:00:00Z"),
                 location = Location(51.685713, -4.206430)
             ).run { matchmakingRepository.save(this) }
 
-            Matchmaking(
+            val matchmaking2 = Matchmaking(
                 category = "soccer",
                 userId = UUID.randomUUID(),
                 at = parse("2025-04-14T11:05:00Z"),
                 location = Location(51.685800, -4.206500)
             ).run { matchmakingRepository.save(this) }
 
-            val matchmakingRequest = Matchmaking(
+            val matchmaking3 = Matchmaking(
                 category = "soccer",
                 userId = UUID.randomUUID(),
                 at = parse("2025-04-14T11:00:00Z"),
@@ -98,13 +105,23 @@ internal class MatchmakingTest {
             ).run { matchmakingRepository.save(this) }
 
             // when
-            matchmakingService.match(matchmakingId = matchmakingRequest.id)
+            matchmakingService.match(matchmakingId = matchmaking3.id)
 
             // then
             assertThat(mediationRepository.mediations).hasSize(1)
             val savedMediation = mediationRepository.mediations.first()
             assertThat(savedMediation).isNotNull
             assertThat(savedMediation.proposals.size).isEqualTo(3)
+            assertThat(mediationEventsPublisher.events).satisfiesOnlyOnce {
+                assertThat(it).isInstanceOf(MediationEvent.MediationStarted::class.java)
+                val event = it as MediationEvent.MediationStarted
+                assertThat(event.mediationId).isEqualTo(savedMediation.id)
+                assertThat(event.includedMatchmakings).containsExactly(
+                    matchmaking1.id,
+                    matchmaking2.id,
+                    matchmaking3.id
+                )
+            }
         }
 
     @Test

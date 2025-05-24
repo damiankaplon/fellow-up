@@ -3,6 +3,8 @@ package io.fellowup.domain.matchmaking
 import io.fellowup.domain.events.EventPublisher
 import io.fellowup.domain.matchmaking.MatchmakingEvent.ActivityMatched
 import io.fellowup.domain.mediation.Mediation
+import io.fellowup.domain.mediation.MediationEvent
+import io.fellowup.domain.mediation.MediationEvent.MediationStarted
 import io.fellowup.domain.mediation.MediationRepository
 import java.util.*
 
@@ -13,7 +15,8 @@ class MatchmakingService(
     private val matchmakingRepository: MatchmakingRepository,
     private val mediationRepository: MediationRepository,
     private val activityRepository: ActivityRepository,
-    private val eventPublisher: EventPublisher<MatchmakingEvent>
+    private val matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>,
+    private val mediationEventsPublisher: EventPublisher<MediationEvent>
 ) {
     suspend fun match(matchmakingId: Matchmaking.Id) {
         val matchmaking: Matchmaking = matchmakingRepository.findByIdOrThrow(matchmakingId)
@@ -26,7 +29,7 @@ class MatchmakingService(
 
         if (matchedActivities.isNotEmpty()) {
             matchedActivities.forEach { activity ->
-                eventPublisher.publish(ActivityMatched(matchmaking.id, activity.id))
+                matchmakingEventsPublisher.publish(ActivityMatched(matchmaking.id, activity.id))
             }
             return
         }
@@ -46,5 +49,9 @@ class MatchmakingService(
         }.toSet()
         val mediation = Mediation(mediationMatchmakings)
         mediationRepository.save(mediation)
+        MediationStarted(
+            mediationId = mediation.id,
+            includedMatchmakings = mediationMatchmakings.map(Matchmaking::id).toSet()
+        ).run { mediationEventsPublisher.publish(this) }
     }
 }
