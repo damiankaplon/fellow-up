@@ -8,6 +8,7 @@ import io.fellowup.domain.events.EventPublisher
 import io.fellowup.domain.matchmaking.MatchmakingEvent
 import io.fellowup.domain.matchmaking.MatchmakingRepository
 import io.fellowup.domain.matchmaking.MatchmakingService
+import io.fellowup.domain.mediation.MediationEvent
 import io.fellowup.domain.test.fixtures.db.MockTransactionalRunner
 import io.fellowup.domain.test.fixtures.events.NopEventPublisher
 import io.fellowup.domain.test.fixtures.matchmaking.ActivityInMemoryRepository
@@ -51,12 +52,14 @@ internal class MatchmakingTestModule {
         matchmakingRepository: MatchmakingRepository,
         mediationRepository: MediationInMemoryRepository,
         activityRepository: ActivityInMemoryRepository,
-        matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>
+        matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>,
+        mediationEventsPublisher: EventPublisher<MediationEvent>
     ): MatchmakingService = MatchmakingService(
         matchmakingRepository,
         mediationRepository,
         activityRepository,
-        matchmakingEventsPublisher
+        matchmakingEventsPublisher,
+        mediationEventsPublisher
     )
 
     @Provides
@@ -73,6 +76,10 @@ internal class MatchmakingTestModule {
     @Provides
     @Singleton
     fun provideMatchmakingEventsPublisher(): EventPublisher<MatchmakingEvent> = NopEventPublisher()
+
+    @Provides
+    @Singleton
+    fun provideMediationEventsPublisher(): EventPublisher<MediationEvent> = NopEventPublisher()
 
     @Provides
     @Singleton
