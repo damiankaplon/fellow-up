@@ -30,6 +30,11 @@ fun Application.module() {
         appComponent.matchmakingCreatedEventConsumer(),
         Topic("io.fellowup.matchmaking.domain.matchmakingCreated")
     )
+    consume(
+        appComponent.transactionalRunner(),
+        appComponent.mediationStartedReadModelConsumer(),
+        Topic("io.fellowup.matchmaking.mediation.started")
+    )
     monitor.installOutbox(appComponent.kafkaOutboxService())
     routing {
         val oAuthModule = installOAuthAuth()

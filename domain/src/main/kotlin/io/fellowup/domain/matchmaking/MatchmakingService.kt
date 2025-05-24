@@ -1,6 +1,7 @@
 package io.fellowup.domain.matchmaking
 
 import io.fellowup.domain.events.EventPublisher
+import io.fellowup.domain.events.Topic
 import io.fellowup.domain.matchmaking.MatchmakingEvent.ActivityMatched
 import io.fellowup.domain.mediation.Mediation
 import io.fellowup.domain.mediation.MediationEvent
@@ -52,6 +53,11 @@ class MatchmakingService(
         MediationStarted(
             mediationId = mediation.id,
             includedMatchmakings = mediationMatchmakings.map(Matchmaking::id).toSet()
-        ).run { mediationEventsPublisher.publish(this) }
+        ).run {
+            mediationEventsPublisher.publish(
+                this,
+                topic = Topic("io.fellowup.matchmaking.mediation.started")
+            )
+        }
     }
 }

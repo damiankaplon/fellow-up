@@ -16,7 +16,7 @@ import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 import kotlin.test.Test
 
-class MediationsKtorIntegrationTest {
+internal class MediationsKtorIntegrationTest {
 
     @Test
     fun `should return mediations read model belonging to currently authenticated fellow`() = testApplication {
