@@ -11,6 +11,7 @@ import io.fellowup.infrastructure.test.DatabaseIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 import kotlin.test.Test
+import io.fellowup.domain.mediation.readmodel.Mediation as MediationReadModel
 
 internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
 
@@ -109,5 +110,25 @@ internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
                 assertThat(mediation.participantIds).contains(participant2)
             }
         )
+    }
+
+    @Test
+    fun `should find mediation by mediation id`() = rollbackTransaction {
+        // given
+        val participant1 = ParticipantId(UUID.randomUUID())
+        val participant2 = ParticipantId(UUID.randomUUID())
+        val mediation = Mediation(
+            category = "soccer",
+            participants = setOf(participant1, participant2)
+        )
+        mediationRepository.save(mediation)
+
+        // when
+        val result: MediationReadModel? = mediations.findById(mediation.id)
+
+        // then
+        assertThat(result).isNotNull
+        assertThat(result!!.id).isEqualTo(mediation.id.value)
+        assertThat(result.participantIds).containsAll(setOf(participant1, participant2))
     }
 }

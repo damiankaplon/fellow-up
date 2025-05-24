@@ -3,8 +3,12 @@ package io.fellowup.infrastructure.mediation.readmodel
 import io.fellowup.domain.mediation.ParticipantId
 import io.fellowup.domain.mediation.readmodel.*
 import io.fellowup.infrastructure.security.Principal
+import io.ktor.util.logging.*
 import kotlinx.serialization.Serializable
 import java.util.*
+import io.fellowup.domain.mediation.Mediation as MediationDomain
+
+private val LOGGER = KtorSimpleLogger(MediationsController::class.java.name)
 
 class MediationsController(
     private val mediations: Mediations,
@@ -16,6 +20,16 @@ class MediationsController(
         val participants: Set<ParticipantId> = mediations.flatMap(Mediation::participantIds).toSet()
         val fellows: Set<Fellow> = fellows.findByParticipantIds(participants)
         return mediations.map { toDto(it, fellows) }.toSet()
+    }
+
+    suspend fun findById(id: MediationDomain.Id, principal: Principal): MediationDto? {
+        val mediation: Mediation? = mediations.findById(id)
+        return if (mediation?.participantIds?.contains(ParticipantId(principal.userId)) == true) {
+            toDto(mediation, fellows.findByParticipantIds(mediation.participantIds))
+        } else {
+            LOGGER.error("Mediation $id not found or not owned by $principal. ${principal.userId} tried to access mediation with id: $id")
+            null
+        }
     }
 
     private fun toDto(mediation: Mediation, fellows: Set<Fellow>): MediationDto {
