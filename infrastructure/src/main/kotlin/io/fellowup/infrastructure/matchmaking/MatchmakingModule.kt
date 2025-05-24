@@ -6,6 +6,7 @@ import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.events.EventPublisher
 import io.fellowup.domain.events.Topic
 import io.fellowup.domain.matchmaking.*
+import io.fellowup.domain.mediation.MediationEvent
 import io.fellowup.domain.mediation.MediationRepository
 import io.fellowup.infrastructure.events.outbox.OutboxPublisher
 import jakarta.inject.Singleton
@@ -54,13 +55,15 @@ class MatchmakingModule {
         matchmakingRepository: MatchmakingRepository,
         mediationRepository: MediationRepository,
         activityRepository: ActivityRepository,
-        matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>
+        matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>,
+        mediationEventsPublisher: EventPublisher<MediationEvent>
     ): MatchmakingService {
         return MatchmakingService(
             matchmakingRepository,
             mediationRepository,
             activityRepository,
-            matchmakingEventsPublisher
+            matchmakingEventsPublisher,
+            mediationEventsPublisher
         )
     }
 }

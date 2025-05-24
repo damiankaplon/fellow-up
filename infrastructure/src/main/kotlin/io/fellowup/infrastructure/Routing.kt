@@ -1,11 +1,13 @@
 package io.fellowup.infrastructure
 
+import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.infrastructure.matchmaking.MatchmakingController
 import io.fellowup.infrastructure.matchmaking.MatchmakingController.CreateMatchmakingBody
 import io.fellowup.infrastructure.matchmaking.MatchmakingController.MatchmakingDto
 import io.fellowup.infrastructure.mediation.readmodel.MediationsController
 import io.fellowup.infrastructure.security.SecuredRouting
 import io.fellowup.infrastructure.security.jwtPrincipalOrThrow
+import io.fellowup.java.toUUID
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -27,6 +29,13 @@ fun Routing.installAppRouting(
         get("$API_PREFIX/matchmakings") {
             call.respond<Collection<MatchmakingDto>>(
                 matchmakingController.getMatchmakings(call.jwtPrincipalOrThrow())
+            )
+        }
+        get("$API_PREFIX/matchmakings/{matchmakingId}/mediation") {
+            val matchmakingId = requireNotNull(call.parameters["matchmakingId"])
+                .toUUID().let { Matchmaking.Id(it) }
+            call.respondNullable<MediationsController.MediationDto?>(
+                mediationsController.findByMatchmakingId(matchmakingId, call.jwtPrincipalOrThrow())
             )
         }
         get("$API_PREFIX/mediations") {

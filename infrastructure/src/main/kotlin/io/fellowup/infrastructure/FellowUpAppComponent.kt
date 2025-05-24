@@ -10,6 +10,7 @@ import io.fellowup.infrastructure.kafka.KafkaOutboxService
 import io.fellowup.infrastructure.matchmaking.MatchmakingController
 import io.fellowup.infrastructure.matchmaking.MatchmakingModule
 import io.fellowup.infrastructure.mediation.MediationModule
+import io.fellowup.infrastructure.mediation.readmodel.MediationStartedReadModelConsumer
 import io.fellowup.infrastructure.mediation.readmodel.MediationsController
 import io.fellowup.infrastructure.mediation.readmodel.keycloak.KeycloakDatabaseFellowsModule
 import io.ktor.server.config.*
@@ -33,6 +34,7 @@ interface FellowUpAppComponent {
     fun matchmakingCreatedEventConsumer(): MatchmakingCreatedEventConsumer
     fun matchmakingController(): MatchmakingController
     fun mediationController(): MediationsController
+    fun mediationStartedReadModelConsumer(): MediationStartedReadModelConsumer
 
     @Component.Builder
     interface Builder {

@@ -12,6 +12,10 @@ internal class MediationsInMemory : Mediations {
         return mediations.filter { it.participantIds.contains(participantId) }.toSet()
     }
 
+    override suspend fun findById(id: io.fellowup.domain.mediation.Mediation.Id): Mediation? {
+        return mediations.singleOrNull { it.id == id.value }
+    }
+
     fun add(mediation: Mediation) {
         mediations = mediations + mediation
     }
