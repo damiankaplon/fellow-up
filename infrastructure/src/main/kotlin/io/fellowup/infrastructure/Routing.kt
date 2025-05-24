@@ -43,12 +43,5 @@ fun Routing.installAppRouting(
                 mediationsController.findNotFinishedByFellowId(call.jwtPrincipalOrThrow())
             )
         }
-        get("$API_PREFIX/mediations/{mediationId}") {
-            val matchmakingId = requireNotNull(call.parameters["mediationId"])
-                .toUUID().let { Matchmaking.Id(it) }
-            call.respondNullable<MediationsController.MediationDto?>(
-                mediationsController.findByMatchmakingId(matchmakingId, call.jwtPrincipalOrThrow())
-            )
-        }
     }
 }

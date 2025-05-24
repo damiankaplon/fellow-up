@@ -19,17 +19,6 @@ class MediationMatchmakingsExposed : MediationMatchmakings {
         }
     }
 
-    override fun findMatchmakings(mediation: Mediation.Id): Set<Matchmaking.Id> {
-        return MediationMatchmakingsTable.select(
-            MediationMatchmakingsTable.mediationId,
-            MediationMatchmakingsTable.matchmakingId
-        ).where { MediationMatchmakingsTable.mediationId eq mediation.value }
-            .groupBy { resultRow: ResultRow -> resultRow[MediationMatchmakingsTable.mediationId] }
-            .entries.singleOrNull()?.value?.map { resultRow: ResultRow ->
-                Matchmaking.Id(resultRow[MediationMatchmakingsTable.matchmakingId])
-            }?.toSet() ?: emptySet()
-    }
-
     override fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id? {
         return MediationMatchmakingsTable.select(
             MediationMatchmakingsTable.mediationId,

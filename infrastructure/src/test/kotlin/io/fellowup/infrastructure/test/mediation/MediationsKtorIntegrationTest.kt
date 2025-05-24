@@ -88,65 +88,7 @@ internal class MediationsKtorIntegrationTest {
             }
         )
     }
-
-    @Test
-    fun `should return mediation by id`() = testApplication {
-        // given
-        val testApp = setupMatchmakingTestApp()
-        val participant1 = ParticipantId(UUID.randomUUID())
-
-        object : Fellow {
-            override val participantId: String = participant1.id.toString()
-            override val name: String = "John Doe"
-        }.run { testApp.component.fellows().add(this) }
-
-        val mediation = object : MediationReadModel {
-            override val id: UUID = UUID.randomUUID()
-            override val category: String = "SOCCER"
-            override val participantIds: Set<ParticipantId> = setOf(participant1)
-            override val proposals: Set<Proposal> = setOf(
-                object : Proposal {
-                    override val acceptedBy: Int = 1
-                    override val location: Location = Location(1.0, 2.0)
-                },
-                object : Proposal {
-                    override val acceptedBy: Int = 2
-                    override val location: Location = Location(2.0, 2.0)
-                },
-            )
-        }.apply { testApp.component.mediations().add(this) }
-
-        testApp.component.mockJwtAuthenticationProvider().setTestJwtPrincipalSubject(participant1.id.toString())
-
-        // when
-        val result = clientJson.get("/api/mediations/${mediation.id}") {
-            contentType(ContentType.Application.Json)
-        }
-
-        // then
-        assertThat(result.status.value).isEqualTo(200)
-        val body = result.body<MediationsController.MediationDto>()
-        val mediationDto: MediationsController.MediationDto = body
-        assertThat(mediationDto.category).isEqualTo("SOCCER")
-        assertThat(mediationDto.fellows).satisfiesExactlyInAnyOrder(
-            {
-                assertThat(it.id).isEqualTo(participant1.id.toString())
-                assertThat(it.name).isEqualTo("John Doe")
-            }
-        )
-        assertThat(mediationDto.proposals).hasSize(2)
-        assertThat(mediationDto.proposals).satisfiesExactlyInAnyOrder(
-            {
-                assertThat(it.location).isEqualTo(MediationsController.LocationDto(2.0, 1.0))
-                assertThat(it.acceptedBy).isEqualTo(1)
-            },
-            {
-                assertThat(it.location).isEqualTo(MediationsController.LocationDto(2.0, 2.0))
-                assertThat(it.acceptedBy).isEqualTo(2)
-            }
-        )
-    }
-
+    
     @Test
     fun `should find mediation given matchmaking id`() = testApplication {
         // given

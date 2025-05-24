@@ -15,10 +15,6 @@ class MediationMatchmakingsInMemory : MediationMatchmakings {
         mediationMatchmakings.put(mediation, matchmakings)
     }
 
-    override fun findMatchmakings(mediation: Mediation.Id): Set<Matchmaking.Id> {
-        return mediationMatchmakings[mediation] ?: emptySet()
-    }
-
     override fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id? {
         return mediationMatchmakings.entries.find { it.value.contains(matchmaking) }?.key
     }

@@ -12,7 +12,7 @@ internal class MediationMatchmakingsExposedIntegrationTest : DatabaseIntegration
     private val mediationMatchmakings = MediationMatchmakingsExposed()
 
     @Test
-    fun `should find matchmaking ids belonging to given mediation id`() = rollbackTransaction {
+    fun `should find mediation containing given matchmaking id`() = rollbackTransaction {
         // given
         val mediationId = Mediation.Id()
         val matchmakingId1 = Matchmaking.Id()
@@ -20,9 +20,9 @@ internal class MediationMatchmakingsExposedIntegrationTest : DatabaseIntegration
         mediationMatchmakings.save(mediationId, setOf(matchmakingId1, matchmakingId2))
 
         // when
-        val result: Set<Matchmaking.Id> = mediationMatchmakings.findMatchmakings(mediationId)
+        val result: Mediation.Id = mediationMatchmakings.findMediationOrThrow(matchmakingId1)
 
         // then
-        assertThat(result).containsExactlyInAnyOrder(matchmakingId1, matchmakingId2)
+        assertThat(result).isEqualTo(mediationId)
     }
 }
