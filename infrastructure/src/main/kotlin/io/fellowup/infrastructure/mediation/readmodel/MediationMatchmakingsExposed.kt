@@ -29,6 +29,15 @@ class MediationMatchmakingsExposed : MediationMatchmakings {
                 Matchmaking.Id(resultRow[MediationMatchmakingsTable.matchmakingId])
             }?.toSet() ?: emptySet()
     }
+
+    override fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id? {
+        return MediationMatchmakingsTable.select(
+            MediationMatchmakingsTable.mediationId,
+            MediationMatchmakingsTable.matchmakingId
+        ).where { MediationMatchmakingsTable.matchmakingId eq matchmaking.value }
+            .groupBy { resultRow: ResultRow -> resultRow[MediationMatchmakingsTable.mediationId] }
+            .keys.singleOrNull()?.let { Mediation.Id(it) }
+    }
 }
 
 private object MediationMatchmakingsTable : CompositeIdTable("mediation_matchmakings") {

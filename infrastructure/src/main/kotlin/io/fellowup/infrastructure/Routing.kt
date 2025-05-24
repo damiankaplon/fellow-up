@@ -1,6 +1,6 @@
 package io.fellowup.infrastructure
 
-import io.fellowup.domain.mediation.Mediation
+import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.infrastructure.matchmaking.MatchmakingController
 import io.fellowup.infrastructure.matchmaking.MatchmakingController.CreateMatchmakingBody
 import io.fellowup.infrastructure.matchmaking.MatchmakingController.MatchmakingDto
@@ -31,16 +31,23 @@ fun Routing.installAppRouting(
                 matchmakingController.getMatchmakings(call.jwtPrincipalOrThrow())
             )
         }
+        get("$API_PREFIX/matchmakings/{matchmakingId}/mediation") {
+            val matchmakingId = requireNotNull(call.parameters["matchmakingId"])
+                .toUUID().let { Matchmaking.Id(it) }
+            call.respondNullable<MediationsController.MediationDto?>(
+                mediationsController.findByMatchmakingId(matchmakingId, call.jwtPrincipalOrThrow())
+            )
+        }
         get("$API_PREFIX/mediations") {
             call.respond<Set<MediationsController.MediationDto>>(
                 mediationsController.findNotFinishedByFellowId(call.jwtPrincipalOrThrow())
             )
         }
         get("$API_PREFIX/mediations/{mediationId}") {
-            val mediationId = requireNotNull(call.parameters["mediationId"])
-                .toUUID().let { Mediation.Id(it) }
+            val matchmakingId = requireNotNull(call.parameters["mediationId"])
+                .toUUID().let { Matchmaking.Id(it) }
             call.respondNullable<MediationsController.MediationDto?>(
-                mediationsController.findById(mediationId, call.jwtPrincipalOrThrow())
+                mediationsController.findByMatchmakingId(matchmakingId, call.jwtPrincipalOrThrow())
             )
         }
     }

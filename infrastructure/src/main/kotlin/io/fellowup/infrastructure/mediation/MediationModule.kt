@@ -67,8 +67,9 @@ class MediationModule {
     @Singleton
     fun provideMediationsController(
         mediations: Mediations,
+        mediationMatchmakings: MediationMatchmakings,
         fellows: Fellows,
     ): MediationsController {
-        return MediationsController(mediations, fellows)
+        return MediationsController(mediations, mediationMatchmakings, fellows)
     }
 }
