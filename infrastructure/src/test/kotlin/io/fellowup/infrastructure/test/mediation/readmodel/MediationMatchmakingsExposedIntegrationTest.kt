@@ -9,7 +9,7 @@ import kotlin.test.Test
 
 internal class MediationMatchmakingsExposedIntegrationTest : DatabaseIntegrationTest() {
 
-    private val mediationMatchmakings = MediationMatchmakingsExposed()
+    private val mediationMatchmakings = MediationMatchmakingsExposed(transactionalRunner)
 
     @Test
     fun `should find mediation containing given matchmaking id`() = rollbackTransaction {

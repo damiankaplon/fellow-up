@@ -1,5 +1,6 @@
 package io.fellowup.infrastructure.test
 
+import io.fellowup.infrastructure.db.ExposedTransactionalRunner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Transaction
@@ -9,7 +10,9 @@ internal abstract class DatabaseIntegrationTest {
     protected val db = TestDatabaseConnectionProvider.provide()
     protected val keycloakDb = TestKeycloakDatabaseConnectionProvider.provide()
 
-    protected fun rollbackTransaction(test: suspend Transaction.() -> Unit): Unit = runBlocking {
+    protected val transactionalRunner = ExposedTransactionalRunner(db)
+
+    protected fun <T> rollbackTransaction(test: suspend Transaction.() -> T): Unit = runBlocking {
         newSuspendedTransaction(Dispatchers.Default, db = db) {
             try {
                 test()
@@ -21,7 +24,7 @@ internal abstract class DatabaseIntegrationTest {
         }
     }
 
-    protected fun rollbackKeycloakTransaction(test: suspend Transaction.() -> Unit): Unit = runBlocking {
+    protected fun <T> rollbackKeycloakTransaction(test: suspend Transaction.() -> T): Unit = runBlocking {
         newSuspendedTransaction(Dispatchers.Default, db = keycloakDb) {
             try {
                 test()

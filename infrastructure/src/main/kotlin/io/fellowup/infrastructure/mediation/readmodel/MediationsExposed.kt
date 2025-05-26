@@ -1,5 +1,6 @@
 package io.fellowup.infrastructure.mediation.readmodel
 
+import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.matchmaking.Location
 import io.fellowup.domain.mediation.ParticipantId
 import io.fellowup.domain.mediation.readmodel.Mediation
@@ -32,32 +33,35 @@ private val MEDIATION_READ_MODEL_DB_COLUMNS = listOf<Expression<*>>(
     ActivityProposalTable.acceptedByParticipantIds,
 )
 
-class MediationsExposed : Mediations {
+class MediationsExposed(
+    private val transactionalRunner: TransactionalRunner
+) : Mediations {
 
 
-    override suspend fun findNotFinishedByParticipant(participantId: ParticipantId): Set<Mediation> {
+    override suspend fun findNotFinishedByParticipant(participantId: ParticipantId): Set<Mediation> =
+        transactionalRunner.transaction(readOnly = true) {
+            return@transaction (MediationTable leftJoin ActivityProposalTable).select(MEDIATION_READ_MODEL_DB_COLUMNS)
+                .where {
+                    MediationTable.participants.contains(setOf(participantId)) and
+                            not(MediationTable.isFinished)
+                }.mapTo(linkedSetOf(), ::DatabaseRow)
+                .groupBy(DatabaseRow::mediationId)
+                .mapTo(linkedSetOf()) { (mediationId: UUID, relatedDatabaseRows: List<DatabaseRow>) ->
+                    Mediation(mediationId, relatedDatabaseRows)
+                }
+        }
 
-        return (MediationTable leftJoin ActivityProposalTable).select(MEDIATION_READ_MODEL_DB_COLUMNS)
-            .where {
-                MediationTable.participants.contains(setOf(participantId)) and
-                        not(MediationTable.isFinished)
-            }.mapTo(linkedSetOf(), ::DatabaseRow)
-            .groupBy(DatabaseRow::mediationId)
-            .mapTo(linkedSetOf()) { (mediationId: UUID, relatedDatabaseRows: List<DatabaseRow>) ->
-                Mediation(mediationId, relatedDatabaseRows)
-            }
-    }
-
-    override suspend fun findById(id: MediationDomain.Id): Mediation? {
-        return (MediationTable leftJoin ActivityProposalTable).select(MEDIATION_READ_MODEL_DB_COLUMNS)
-            .where { MediationTable.id eq id.value }
-            .mapTo(linkedSetOf(), ::DatabaseRow)
-            .groupBy(DatabaseRow::mediationId)
-            .entries.find { it.key == id.value }
-            ?.let { (mediationId: UUID, relatedDatabaseRows: List<DatabaseRow>) ->
-                Mediation(mediationId, relatedDatabaseRows)
-            }
-    }
+    override suspend fun findById(id: MediationDomain.Id): Mediation? =
+        transactionalRunner.transaction(readOnly = true) {
+            return@transaction (MediationTable leftJoin ActivityProposalTable).select(MEDIATION_READ_MODEL_DB_COLUMNS)
+                .where { MediationTable.id eq id.value }
+                .mapTo(linkedSetOf(), ::DatabaseRow)
+                .groupBy(DatabaseRow::mediationId)
+                .entries.find { it.key == id.value }
+                ?.let { (mediationId: UUID, relatedDatabaseRows: List<DatabaseRow>) ->
+                    Mediation(mediationId, relatedDatabaseRows)
+                }
+        }
 
     private data class DatabaseRow(
         val mediationId: UUID,

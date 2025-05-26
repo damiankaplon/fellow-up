@@ -7,8 +7,8 @@ interface MediationMatchmakings {
 
     fun save(mediation: Mediation.Id, matchmakings: Set<Matchmaking.Id>)
 
-    fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id?
+    suspend fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id?
 
-    fun findMediationOrThrow(matchmaking: Matchmaking.Id): Mediation.Id =
+    suspend fun findMediationOrThrow(matchmaking: Matchmaking.Id): Mediation.Id =
         findMediation(matchmaking) ?: error("Did not find mediation of matchmaking with id: $matchmaking")
 }
