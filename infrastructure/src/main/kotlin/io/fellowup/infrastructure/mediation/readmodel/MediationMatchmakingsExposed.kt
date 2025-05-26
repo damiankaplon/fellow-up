@@ -1,5 +1,6 @@
 package io.fellowup.infrastructure.mediation.readmodel
 
+import io.fellowup.domain.db.TransactionalRunner
 import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.domain.mediation.Mediation
 import io.fellowup.domain.mediation.readmodel.MediationMatchmakings
@@ -7,7 +8,9 @@ import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
 
-class MediationMatchmakingsExposed : MediationMatchmakings {
+class MediationMatchmakingsExposed(
+    private val transactionalRunner: TransactionalRunner
+) : MediationMatchmakings {
 
     override fun save(
         mediation: Mediation.Id,
@@ -19,14 +22,15 @@ class MediationMatchmakingsExposed : MediationMatchmakings {
         }
     }
 
-    override fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id? {
-        return MediationMatchmakingsTable.select(
-            MediationMatchmakingsTable.mediationId,
-            MediationMatchmakingsTable.matchmakingId
-        ).where { MediationMatchmakingsTable.matchmakingId eq matchmaking.value }
-            .groupBy { resultRow: ResultRow -> resultRow[MediationMatchmakingsTable.mediationId] }
-            .keys.singleOrNull()?.let { Mediation.Id(it) }
-    }
+    override suspend fun findMediation(matchmaking: Matchmaking.Id): Mediation.Id? =
+        transactionalRunner.transaction(readOnly = true) {
+            return@transaction MediationMatchmakingsTable.select(
+                MediationMatchmakingsTable.mediationId,
+                MediationMatchmakingsTable.matchmakingId
+            ).where { MediationMatchmakingsTable.matchmakingId eq matchmaking.value }
+                .groupBy { resultRow: ResultRow -> resultRow[MediationMatchmakingsTable.mediationId] }
+                .keys.singleOrNull()?.let { Mediation.Id(it) }
+        }
 }
 
 private object MediationMatchmakingsTable : CompositeIdTable("mediation_matchmakings") {

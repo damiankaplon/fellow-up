@@ -16,10 +16,10 @@ import io.fellowup.domain.mediation.readmodel.Mediation as MediationReadModel
 internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
 
     private val mediationRepository = MediationDaoRepository()
-    private val mediations = MediationsExposed()
+    private val mediations = MediationsExposed(transactionalRunner)
 
     @Test
-    fun `should return mediation read model containing proposals`() = rollbackTransaction {
+    fun `should return mediation read model containing proposals`(): Unit = rollbackTransaction {
         // given
         val participant1 = ParticipantId(UUID.randomUUID())
         val participant2 = ParticipantId(UUID.randomUUID())
@@ -50,7 +50,7 @@ internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
     }
 
     @Test
-    fun `should filter out finished mediations`() = rollbackTransaction {
+    fun `should filter out finished mediations`(): Unit = rollbackTransaction {
         // given
         val participant1 = ParticipantId(UUID.randomUUID())
         val participant2 = ParticipantId(UUID.randomUUID())
@@ -83,7 +83,7 @@ internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
     }
 
     @Test
-    fun `should filter out mediations not having given participant`() = rollbackTransaction {
+    fun `should filter out mediations not having given participant`(): Unit = rollbackTransaction {
         // given
         val participant1 = ParticipantId(UUID.randomUUID())
         val participant2 = ParticipantId(UUID.randomUUID())
@@ -113,7 +113,7 @@ internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
     }
 
     @Test
-    fun `should find mediation by mediation id`() = rollbackTransaction {
+    fun `should find mediation by mediation id`(): Unit = rollbackTransaction {
         // given
         val participant1 = ParticipantId(UUID.randomUUID())
         val participant2 = ParticipantId(UUID.randomUUID())

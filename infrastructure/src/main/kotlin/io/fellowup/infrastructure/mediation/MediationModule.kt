@@ -35,11 +35,10 @@ class MediationModule {
         return MediationDaoRepository()
     }
 
-
     @Provides
     @Singleton
-    fun provideMediations(): Mediations {
-        return MediationsExposed()
+    fun provideMediations(transactionalRunner: TransactionalRunner): Mediations {
+        return MediationsExposed(transactionalRunner)
     }
 
     @Provides
@@ -53,8 +52,8 @@ class MediationModule {
 
     @Provides
     @Singleton
-    fun provideMediationMatchmakings(): MediationMatchmakings {
-        return MediationMatchmakingsExposed()
+    fun provideMediationMatchmakings(transactionalRunner: TransactionalRunner): MediationMatchmakings {
+        return MediationMatchmakingsExposed(transactionalRunner)
     }
 
     @Provides
