@@ -25,8 +25,8 @@ db:
   schema: "${APP_FELLOW_UP_DB_SCHEMA}:public"
   keycloak:
     jdbcUrl: "${APP_FELLOW_UP_KC_DB_URL}:jdbc:postgresql://localhost:5432/keycloak?serverTimezone=UTC"
-    user: "${APP_FELLOW_UP_KC_DB_USER}:app_fellow_up"
-    password: "${APP_FELLOW_UP_KC_DB_PASS}:app_fellow_up"
+    user: "${APP_FELLOW_UP_KC_DB_USER}:keycloak"
+    password: "${APP_FELLOW_UP_KC_DB_PASS}:keycloak"
     schema: "${APP_FELLOW_UP_KC_DB_SCHEMA}:public"
 
 kafka:
