@@ -11,6 +11,7 @@ val JSONB_PARTICIPANTS_DESERIALIZER: (String) -> Set<ParticipantId> =
         participants.removePrefix("[")
             .removeSuffix("]")
             .split(",")
+            .filter(String::isNotBlank)
             .map {
                 it.trim().removePrefix("\"").removeSuffix("\"").let { uuid -> ParticipantId(UUID.fromString(uuid)) }
             }
