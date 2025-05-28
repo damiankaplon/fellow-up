@@ -68,6 +68,7 @@ class MediationsExposed(
         val category: String,
         val participants: Set<ParticipantId>,
         val proposalId: UUID?,
+        val acceptedByParticipantIds: Set<ParticipantId>?,
         val orderNumber: Int?,
         val time: Instant?,
         val longitude: Double?,
@@ -81,6 +82,7 @@ class MediationsExposed(
             category = resultRow[MediationTable.category],
             participants = resultRow[MediationTable.participants],
             proposalId = resultRow.getOrNull(ActivityProposalTable.id)?.value,
+            acceptedByParticipantIds = resultRow[ActivityProposalTable.acceptedByParticipantIds],
             orderNumber = resultRow.getOrNull(ActivityProposalTable.orderNumber),
             time = resultRow.getOrNull(ActivityProposalTable.time),
             longitude = resultRow.getOrNull(ActivityProposalTable.longitude),
@@ -100,11 +102,12 @@ class MediationsExposed(
                 relatedDatabaseRows.mapNotNullTo(linkedSetOf()) { row ->
                     if (row.proposalId == null) return@mapNotNullTo null
                     object : Proposal {
-                        override val acceptedBy: Int = row.acceptedBy!!
+                        override val acceptedBy: Set<ParticipantId> = row.acceptedByParticipantIds ?: emptySet()
                         override val location: Location = Location(
                             longitude = row.longitude!!,
                             latitude = row.latitude!!
                         )
+                        override val time: Instant = row.time!!
                     }
                 }
         }

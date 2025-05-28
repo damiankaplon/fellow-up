@@ -41,8 +41,9 @@ internal class MediationsIntegrationTest : DatabaseIntegrationTest() {
                 assertThat(mediation.participantIds).contains(participant1, participant2)
                 assertThat(mediation.proposals).singleElement().satisfies(
                     {
+                        assertThat(it.acceptedBy).contains(participant1)
                         assertThat(it.location).isEqualTo(Location(10.0, 10.5))
-                        assertThat(it.acceptedBy).isEqualTo(1)
+                        assertThat(it.time).isEqualTo("2025-04-22T20:13:00".utcInstant())
                     }
                 )
             }

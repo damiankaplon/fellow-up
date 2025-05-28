@@ -4,8 +4,11 @@ import io.fellowup.domain.matchmaking.Matchmaking
 import io.fellowup.domain.mediation.Mediation
 import io.fellowup.domain.mediation.ParticipantId
 import io.fellowup.domain.mediation.readmodel.*
+import io.fellowup.infrastructure.kotlinx.serialization.Uuid
 import io.fellowup.infrastructure.security.Principal
 import io.ktor.util.logging.*
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.Serializable
 import java.util.*
 import io.fellowup.domain.mediation.readmodel.Mediation as MediationReadModel
@@ -59,11 +62,12 @@ class MediationsController(
 
     private fun toDto(proposal: Proposal): ProposalDto {
         return ProposalDto(
-            acceptedBy = proposal.acceptedBy,
+            acceptedBy = proposal.acceptedBy.map(ParticipantId::id).map(::Uuid).toSet(),
             location = LocationDto(
                 lat = proposal.location.latitude,
                 lng = proposal.location.longitude
-            )
+            ),
+            time = proposal.time.toKotlinInstant()
         )
     }
 
@@ -82,8 +86,9 @@ class MediationsController(
 
     @Serializable
     data class ProposalDto(
-        val acceptedBy: Int,
-        val location: LocationDto
+        val acceptedBy: Set<Uuid>,
+        val location: LocationDto,
+        val time: Instant
     )
 
     @Serializable

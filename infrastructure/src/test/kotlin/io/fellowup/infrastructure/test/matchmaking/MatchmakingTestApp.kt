@@ -40,11 +40,13 @@ internal class MatchmakingTestModule {
     fun provideMatchmakingController(
         transactionalRunner: TransactionalRunner,
         matchmakingRepository: MatchmakingRepository,
-        matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>
+        matchmakingEventsPublisher: EventPublisher<MatchmakingEvent>,
+        mediationMatchmakings: MediationMatchmakingsInMemory,
     ): MatchmakingController = MatchmakingController(
         transactionalRunner,
         matchmakingRepository,
-        matchmakingEventsPublisher
+        mediationMatchmakings,
+        matchmakingEventsPublisher,
     )
 
     @Provides
