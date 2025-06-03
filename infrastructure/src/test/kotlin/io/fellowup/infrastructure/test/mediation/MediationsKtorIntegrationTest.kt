@@ -7,7 +7,6 @@ import io.fellowup.domain.mediation.ParticipantId
 import io.fellowup.domain.mediation.readmodel.Fellow
 import io.fellowup.domain.mediation.readmodel.Proposal
 import io.fellowup.domain.test.fixtures.utcInstant
-import io.fellowup.infrastructure.kotlinx.serialization.toKotlinx
 import io.fellowup.infrastructure.mediation.readmodel.MediationsController
 import io.fellowup.infrastructure.test.clientJson
 import io.fellowup.infrastructure.test.matchmaking.setupMatchmakingTestApp
@@ -85,18 +84,28 @@ internal class MediationsKtorIntegrationTest {
         assertThat(mediationDto.proposals).hasSize(2)
         assertThat(mediationDto.proposals).satisfiesExactlyInAnyOrder(
             {
-                assertThat(it.acceptedBy).containsExactly(participant1.id.toKotlinx())
+                assertThat(it.acceptedBy).satisfiesExactlyInAnyOrder(
+                    { fellow: MediationsController.FellowDto ->
+                        assertThat(fellow.id).isEqualTo(participant1.id.toString())
+                        assertThat(fellow.name).isEqualTo("John Doe")
+                    }
+                )
                 assertThat(it.location).isEqualTo(MediationsController.LocationDto(2.0, 1.0))
                 assertThat(it.time).isEqualTo("2025-02-14T16:00:00".utcInstant().toKotlinInstant())
             },
             {
-                assertThat(it.acceptedBy).containsExactly(participant2.id.toKotlinx())
+                assertThat(it.acceptedBy).satisfiesExactlyInAnyOrder(
+                    { fellow: MediationsController.FellowDto ->
+                        assertThat(fellow.id).isEqualTo(participant2.id.toString())
+                        assertThat(fellow.name).isEqualTo("Jane Doe")
+                    }
+                )
                 assertThat(it.location).isEqualTo(MediationsController.LocationDto(2.0, 2.0))
                 assertThat(it.time).isEqualTo("2025-02-14T16:00:00".utcInstant().toKotlinInstant())
             }
         )
     }
-    
+
     @Test
     fun `should find mediation given matchmaking id`() = testApplication {
         // given
@@ -118,7 +127,7 @@ internal class MediationsKtorIntegrationTest {
         val mediation = object : MediationReadModel {
             override val id: UUID = UUID.randomUUID()
             override val category: String = "SOCCER"
-            override val participantIds: Set<ParticipantId> = setOf(participant1)
+            override val participantIds: Set<ParticipantId> = setOf(participant1, participant2)
             override val proposals: Set<Proposal> = setOf(
                 object : Proposal {
                     override val acceptedBy = setOf(participant1)
@@ -156,17 +165,31 @@ internal class MediationsKtorIntegrationTest {
             {
                 assertThat(it.id).isEqualTo(participant1.id.toString())
                 assertThat(it.name).isEqualTo("John Doe")
+            },
+            {
+                assertThat(it.id).isEqualTo(participant2.id.toString())
+                assertThat(it.name).isEqualTo("Jane Doe")
             }
         )
         assertThat(mediationDto.proposals).hasSize(2)
         assertThat(mediationDto.proposals).satisfiesExactlyInAnyOrder(
             {
-                assertThat(it.acceptedBy).containsExactly(participant1.id.toKotlinx())
+                assertThat(it.acceptedBy).satisfiesExactlyInAnyOrder(
+                    { fellow: MediationsController.FellowDto ->
+                        assertThat(fellow.id).isEqualTo(participant1.id.toString())
+                        assertThat(fellow.name).isEqualTo("John Doe")
+                    }
+                )
                 assertThat(it.location).isEqualTo(MediationsController.LocationDto(2.0, 1.0))
                 assertThat(it.time).isEqualTo("2025-02-14T16:00:00".utcInstant().toKotlinInstant())
             },
             {
-                assertThat(it.acceptedBy).containsExactly(participant2.id.toKotlinx())
+                assertThat(it.acceptedBy).satisfiesExactlyInAnyOrder(
+                    { fellow: MediationsController.FellowDto ->
+                        assertThat(fellow.id).isEqualTo(participant2.id.toString())
+                        assertThat(fellow.name).isEqualTo("Jane Doe")
+                    }
+                )
                 assertThat(it.location).isEqualTo(MediationsController.LocationDto(2.0, 2.0))
                 assertThat(it.time).isEqualTo("2025-02-14T16:00:00".utcInstant().toKotlinInstant())
             }
