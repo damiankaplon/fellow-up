@@ -61,6 +61,7 @@ export default class MatchmakingsOperationsFetch implements MatchmakingsOperatio
     return {
       id: dto.id,
       category: dto.category,
+      status: dto.status,
       at: new Date(dto.at),
       location: dto.location
     }
@@ -78,6 +79,7 @@ interface CreateMatchmakingBody {
 
 interface MatchmakingDto {
   id: string;
+  status: 'STILL_LOOKING' | 'MEDIATING';
   category: string;
   at: string;
   location: {
