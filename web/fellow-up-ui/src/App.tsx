@@ -9,7 +9,7 @@ import LoupeIcon from '@mui/icons-material/Loupe';
 import Overview from "./matchmaking/Overview.tsx";
 import KeycloakProtected from "./security/KeycloakProtected.tsx";
 import {Box, CircularProgress} from "@mui/material";
-import {Diversity3} from "@mui/icons-material";
+import MatchmakingMediation from "./mediation/MatchmakingMediation.tsx";
 
 export default function App() {
 
@@ -18,11 +18,6 @@ export default function App() {
       path: '/matchmaking',
       text: 'Matchmaking',
       icon: <LoupeIcon/>
-    },
-    {
-      path: '/mediations',
-      text: 'Mediation',
-      icon: <Diversity3/>
     }
   ]
 
@@ -36,7 +31,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/matchmaking" element={<Overview/>}/>
-          <Route path="/mediation" element={<Overview/>}/>
+          <Route path="/matchmaking/:matchmakingId/mediation" element={<MatchmakingMediation/>}/>
         </Routes>
         <BottomNavBar destinations={bottomNavBarDestinations}/>
       </BrowserRouter>
