@@ -1,7 +1,7 @@
 import {DataGrid, GridColDef} from "@mui/x-data-grid";
 import Matchmaking from "./Matchmaking.ts";
-import {ReactNode} from "react";
 import {Chip} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 const columns: GridColDef<(Matchmaking[])[number]>[] = [
   {
@@ -11,7 +11,7 @@ const columns: GridColDef<(Matchmaking[])[number]>[] = [
   },
   {
     field: 'status',
-    renderCell: (params) => renderStatusCell(params.row),
+    renderCell: (params) => StatusCell(params.row),
     headerName: 'Status',
     headerAlign: 'center',
     align: 'center',
@@ -37,16 +37,23 @@ export default function MatchmakingsGrid({matchmakings}: { matchmakings: Matchma
   );
 }
 
-function renderStatusCell(matchmaking: Matchmaking): ReactNode {
-  let status: string = "Still looking";
+function StatusCell(matchmaking: Matchmaking) {
+  const navigate = useNavigate();
   let color: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' = "primary";
-  if (matchmaking?.mediationId) {
-    status = 'Mediating';
+  let text: string | undefined;
+  if (matchmaking?.status === 'MEDIATING') {
     color = 'success';
+    text = 'Mediating';
+  } else {
+    color = 'primary';
+    text = 'Still looking';
   }
-  if (status) {
-    return (
-      <Chip label={status} color={color} variant="outlined"></Chip>
-    );
-  }
+  return (
+    <Chip
+      label={text}
+      color={color}
+      variant="outlined"
+      onClick={() => navigate(`/matchmaking/${matchmaking.id}/mediation`)}
+    />
+  );
 }
