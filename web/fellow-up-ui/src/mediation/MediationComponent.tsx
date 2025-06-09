@@ -34,6 +34,7 @@ export default function MediationComponent(props: MediationProps) {
   }
 
   const currentProposal: Proposal = proposals[currentProposalIndex];
+  const currentProposalDate: Date = new Date(currentProposal.time);
 
   const handleNextProposal: () => void = () => {
     setCurrentProposalIndex((prevIndex) => (prevIndex + 1) % proposals.length);
@@ -73,6 +74,13 @@ export default function MediationComponent(props: MediationProps) {
 
         <Paper elevation={2}
                sx={{margin: 1, width: '95%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+          <Typography
+            sx={{padding: '1em'}}>
+            {`${currentProposalDate.toLocaleDateString()} - ${currentProposalDate.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}`}
+          </Typography>
           {props.googleMapsApiKey ? (
             <Box sx={{
               display: 'flex',

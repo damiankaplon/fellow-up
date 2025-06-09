@@ -2,6 +2,7 @@ import {DataGrid, GridColDef} from "@mui/x-data-grid";
 import Matchmaking from "./Matchmaking.ts";
 import {Chip} from "@mui/material";
 import {useNavigate} from "react-router-dom";
+import {format} from "date-fns";
 
 const columns: GridColDef<(Matchmaking[])[number]>[] = [
   {
@@ -23,7 +24,8 @@ const columns: GridColDef<(Matchmaking[])[number]>[] = [
     flex: 1,
     headerAlign: 'right',
     align: 'right',
-    type: 'dateTime'
+    type: 'dateTime',
+    valueFormatter: (value) => value ? format(value, 'dd/MM HH:mm') : '',
   },
 ];
 
