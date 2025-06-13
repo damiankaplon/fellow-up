@@ -1,6 +1,6 @@
 import {LinearProgress} from "@mui/material";
 import {CategorySelect} from "./CategorySelect.tsx";
-import React from "react";
+import React, {useReducer} from "react";
 import {DateSelect} from "./DateSelect.tsx";
 import {TimeSelect} from "./TimeSelect.tsx";
 import {LocationSelect} from "./LocationSelect.tsx";
@@ -14,15 +14,70 @@ interface MatchmakingWizardState {
   location?: Location;
 }
 
+export interface Location {
+  lat: number;
+  lng: number;
+}
+
+type CategorySelectAction = {
+  type: 'CATEGORY_SELECT',
+  category: string
+}
+
+type DateSelectAction = {
+  type: 'DATE_SELECT',
+  date: Date
+}
+
+type TimeSelectAction = {
+  type: 'TIME_SELECT',
+  time: Date
+}
+
+type LocationSelectAction = {
+  type: 'LOCATION_SELECT',
+  location: Location
+}
+
+type Action = CategorySelectAction | DateSelectAction | TimeSelectAction | LocationSelectAction;
+
+function reducer(state: MatchmakingWizardState, action: Action) {
+  if (action.type === 'CATEGORY_SELECT') {
+    return {
+      ...state,
+      category: action.category,
+      currentStep: state.currentStep + 1
+    }
+  }
+  if (action.type === 'DATE_SELECT') {
+    return {
+      ...state,
+      date: action.date,
+      currentStep: state.currentStep + 1,
+    }
+  }
+  if (action.type === 'TIME_SELECT') {
+    return {
+      ...state,
+      time: action.time,
+      currentStep: state.currentStep + 1,
+    }
+  }
+  if (action.type === 'LOCATION_SELECT') {
+    return {
+      ...state,
+      location: action.location,
+      currentStep: state.currentStep + 1,
+      completed: true
+    }
+  }
+  return state;
+}
+
 export interface MatchmakingWizardResult {
   category: string;
   date: Date;
   location: Location;
-}
-
-export interface Location {
-  lat: number;
-  lng: number;
 }
 
 export interface MatchmakingWizardProps {
@@ -31,52 +86,29 @@ export interface MatchmakingWizardProps {
 
 export function MatchmakingWizard(props: MatchmakingWizardProps) {
   const [currentContent, setCurrentContent] = React.useState<React.ReactElement>();
-  const [wizardState, setWizardState] = React.useState<MatchmakingWizardState>({
-    steps: 4,
-    currentStep: 1,
-    completed: false
-  });
-
-  const onCategorySelect = (category: string) => setWizardState(
-    (currentState: MatchmakingWizardState) => (
-      {...currentState, category: category, currentStep: currentState.currentStep + 1}
-    )
+  const [wizardState, dispatch] = useReducer(
+    reducer,
+    {
+      steps: 4,
+      currentStep: 1,
+      completed: false
+    }
   );
-  const categorySelect = (<CategorySelect onCategorySelect={onCategorySelect}/>);
+  const categorySelect = (
+    <CategorySelect
+      onCategorySelect={(value: string) => dispatch({type: 'CATEGORY_SELECT', category: value})}/>);
 
-  const onDateSelect = (selected: Date) => setWizardState(
-    (currentState: MatchmakingWizardState) => (
-      {
-        ...currentState,
-        date: selected,
-        currentStep: currentState.currentStep + 1
-      }
-    )
-  );
-  const dateSelect = (<DateSelect onDateSelect={onDateSelect}/>);
+  const dateSelect = (<DateSelect
+    onDateSelect={(value: Date) => dispatch({type: 'DATE_SELECT', date: value})}/>);
 
-  const onTimeSelect = (value: Date) => setWizardState(
-    (currentState: MatchmakingWizardState) => (
-      {
-        ...currentState,
-        date: value,
-        currentStep: currentState.currentStep + 1
-      }
-    )
-  );
-  const timeSelect = (<TimeSelect selectedDate={wizardState.date} onTimeSelect={onTimeSelect}/>);
+  const timeSelect = (<TimeSelect selectedDate={wizardState.date}
+                                  onTimeSelect={(value: Date) => dispatch({type: 'TIME_SELECT', time: value})}/>);
 
-  const onLocationSelect = (location: Location) => setWizardState(
-    (currentState: MatchmakingWizardState) => (
-      {
-        ...currentState,
-        location: location,
-        completed: true
-      }
-    )
-  );
   const locationSelect = (<LocationSelect googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                                          onLocationSelect={onLocationSelect}/>);
+                                          onLocationSelect={(value: Location) => dispatch({
+                                            type: 'LOCATION_SELECT',
+                                            location: value
+                                          })}/>);
 
   React.useEffect(() => {
     if (wizardState.currentStep == 1) {
