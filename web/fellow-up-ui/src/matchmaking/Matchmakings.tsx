@@ -16,11 +16,9 @@ export default function Matchmakings({operations}: MatchmakingsProps) {
   const [matchmakings, setMatchmakings] = React.useState<Matchmaking[] | undefined>();
   React.useEffect(
     () => {
-      if (matchmakings === undefined) {
-        operations.findMatchmakings()
-          .then((matchmakings: Matchmaking[]) => setMatchmakings(matchmakings));
-      }
-    }, [matchmakings]);
+      operations.findMatchmakings()
+        .then((matchmakings: Matchmaking[]) => setMatchmakings(matchmakings));
+    });
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <div style={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>

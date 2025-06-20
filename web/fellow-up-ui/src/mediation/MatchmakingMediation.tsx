@@ -17,21 +17,19 @@ export default function MatchmakingMediation() {
   const authContext = React.useContext(FellowUpAuthContext);
   const matchmakingsApiJwtProvider: MatchmakingsApiJwtProvider = {provide: () => authContext.jwt!};
   const operations = new MediationOperationsFetch(matchmakingsApiJwtProvider);
-  const matchmakingId: string | undefined = useParams().matchmakingId;
+  const matchmakingId: string = useParams().matchmakingId!;
   const [component, setComponent] = React.useState<React.ReactNode>(LOADING_COMPONENT);
 
   useEffect(() => {
-    if (matchmakingId && component == LOADING_COMPONENT) {
-      operations.getMediationByMatchmakingId(matchmakingId).then((mediation: Mediation) => {
-          setComponent(<MediationComponent mediation={mediation}
-                                           googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                                           onAcceptProposal={() => {
-                                           }}/>
-          );
-        }
-      );
-    }
-  }, [component]);
+    operations.getMediationByMatchmakingId(matchmakingId).then((mediation: Mediation) => {
+        setComponent(<MediationComponent mediation={mediation}
+                                         googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+                                         onAcceptProposal={() => {
+                                         }}/>
+        );
+      }
+    );
+  });
 
   return component;
 }
